@@ -1,0 +1,120 @@
+{
+	"build_systems":
+	[
+		{
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "SmithServices (Linux)",
+			"shell_cmd": "make -j4",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j4 clean"
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j4 rebuild_cache"
+				},
+				{
+					"name": "RunService",
+					"shell_cmd": "make -j4 RunService"
+				},
+				{
+					"name": "cvplotlib",
+					"shell_cmd": "make -j4 cvplotlib"
+				},
+				{
+					"name": "RadioInterface",
+					"shell_cmd": "make -j4 RadioInterface"
+				},
+				{
+					"name": "src/GA.o",
+					"shell_cmd": "make -j4 src/GA.o"
+				},
+				{
+					"name": "src/GA.i",
+					"shell_cmd": "make -j4 src/GA.i"
+				},
+				{
+					"name": "src/GA.s",
+					"shell_cmd": "make -j4 src/GA.s"
+				},
+				{
+					"name": "src/PathGeneration.o",
+					"shell_cmd": "make -j4 src/PathGeneration.o"
+				},
+				{
+					"name": "src/PathGeneration.i",
+					"shell_cmd": "make -j4 src/PathGeneration.i"
+				},
+				{
+					"name": "src/PathGeneration.s",
+					"shell_cmd": "make -j4 src/PathGeneration.s"
+				},
+				{
+					"name": "src/UAV.o",
+					"shell_cmd": "make -j4 src/UAV.o"
+				},
+				{
+					"name": "src/UAV.i",
+					"shell_cmd": "make -j4 src/UAV.i"
+				},
+				{
+					"name": "src/UAV.s",
+					"shell_cmd": "make -j4 src/UAV.s"
+				},
+				{
+					"name": "src/UAVSimulate.o",
+					"shell_cmd": "make -j4 src/UAVSimulate.o"
+				},
+				{
+					"name": "src/UAVSimulate.i",
+					"shell_cmd": "make -j4 src/UAVSimulate.i"
+				},
+				{
+					"name": "src/UAVSimulate.s",
+					"shell_cmd": "make -j4 src/UAVSimulate.s"
+				},
+				{
+					"name": "src/main.o",
+					"shell_cmd": "make -j4 src/main.o"
+				},
+				{
+					"name": "src/main.i",
+					"shell_cmd": "make -j4 src/main.i"
+				},
+				{
+					"name": "src/main.s",
+					"shell_cmd": "make -j4 src/main.s"
+				},
+				{
+					"name": "src/radio_listen_thread.o",
+					"shell_cmd": "make -j4 src/radio_listen_thread.o"
+				},
+				{
+					"name": "src/radio_listen_thread.i",
+					"shell_cmd": "make -j4 src/radio_listen_thread.i"
+				},
+				{
+					"name": "src/radio_listen_thread.s",
+					"shell_cmd": "make -j4 src/radio_listen_thread.s"
+				}
+			],
+			"working_dir": "${project_path}/build"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"cmake":
+		{
+			"build_folder": "${project_path}/build"
+		}
+	}
+}

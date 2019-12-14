@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(SmithServices VERSION 0.1.0 LANGUAGES C CXX)
+
+# SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_BUILD_TYPE "Debug")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O0")
+
+find_package(OpenCV  REQUIRED)
+
+add_definitions(-D SIMULATE)
+
+INCLUDE_DIRECTORIES(include)
+include_directories(${PROJECT_SOURCE_DIR}/libHardWare/radioModem/include)
+include_directories(${PROJECT_SOURCE_DIR}/cvplotlib/include)
+
+AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src  DIR_SRCS)
+ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/cvplotlib)
+ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/libHardWare)
+add_executable(RunService ${DIR_SRCS})
+
+target_link_libraries(RunService  RadioInterface)
+target_link_libraries(RunService pthread)
+target_link_libraries(RunService ${OpenCV_LIBS})
+target_link_libraries(RunService cvplotlib)

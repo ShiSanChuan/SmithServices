@@ -1,0 +1,1388 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"m",
+				"microseconds\tmicroseconds"
+			],
+			[
+				"si",
+				"size"
+			],
+			[
+				"tim",
+				"time\ttime_t time(time_t *__timer)"
+			],
+			[
+				"c",
+				"clear"
+			],
+			[
+				"Re",
+				"Red\tconst cvplot::Color Red"
+			],
+			[
+				"sqr",
+				"sqrt\tdouble sqrt(double __x)"
+			],
+			[
+				"da",
+				"dataSend\tint dataSend(RadioPacket sendPacket)"
+			],
+			[
+				"se",
+				"sendPacket"
+			],
+			[
+				"int",
+				"int64_t\tint64_t"
+			],
+			[
+				"Set",
+				"SetSituation\tvoid SetSituation(uint8_t)"
+			],
+			[
+				"Work",
+				"Worker\tstd::map<Marker, UAVSimulate *> Worker"
+			],
+			[
+				"uint",
+				"uint8_t\tuint8_t"
+			],
+			[
+				"UAV",
+				"UAVSimulate.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"threa",
+				"thread_pool.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"uin",
+				"UINT32_MAX\tUINT32_MAX"
+			],
+			[
+				"G",
+				"GetUAVPosion\tValue3 GetUAVPosion(Marker ID)"
+			],
+			[
+				"time",
+				"timer.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"settim",
+				"setitimer\tint setitimer(__itimer_which_t __which, const struct itimerval *__restrict __new, struct itimerval *__restrict __old)"
+			],
+			[
+				"t",
+				"tv_sec\t__time_t tv_sec"
+			],
+			[
+				"i",
+				"it_interval\tstruct timeval it_interval"
+			],
+			[
+				"radi",
+				"radio_listen_thread.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"de",
+				"device\tMarker device"
+			],
+			[
+				"radio",
+				"radio_port.h\t/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/include"
+			],
+			[
+				"th",
+				"thread_pool.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"depth",
+				"depth_img"
+			],
+			[
+				"dep",
+				"depth_img"
+			],
+			[
+				"sta",
+				"start_flag"
+			],
+			[
+				"ca",
+				"car_status"
+			],
+			[
+				"pri",
+				"private"
+			],
+			[
+				"thread",
+				"thread_pool.cpp"
+			],
+			[
+				"Get",
+				"GetX"
+			],
+			[
+				"join",
+				"joinable\tbool joinable() const"
+			],
+			[
+				"to_s",
+				"to_string\tstring to_string(double __val)"
+			],
+			[
+				"get",
+				"getTickCount\tint64 getTickCount()"
+			],
+			[
+				"ar",
+				"argc\tint argc"
+			],
+			[
+				"fast",
+				"fastNlMeansDenoisingColored\tvoid fastNlMeansDenoisingColored(InputArray src, OutputArray dst)"
+			],
+			[
+				"Ad",
+				"adaptiveThreshold\tvoid adaptiveThreshold(InputArray src, OutputArray dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)"
+			],
+			[
+				"sac",
+				"savecap"
+			],
+			[
+				"vid",
+				"VideoCaptureAPIs\tVideoCaptureAPIs"
+			],
+			[
+				"Op",
+				"OpenCV_LIBS"
+			],
+			[
+				"ad",
+				"adjustfindhsv"
+			],
+			[
+				"thre",
+				"thresh_yellow"
+			],
+			[
+				"max",
+				"max_g"
+			],
+			[
+				"minM",
+				"minMaxIdx\tvoid minMaxIdx(InputArray src, double *minVal)"
+			],
+			[
+				"begi",
+				"begin\titerator begin()"
+			],
+			[
+				"is",
+				"isContinuous\tbool isContinuous() const"
+			],
+			[
+				"row",
+				"rows\tint rows"
+			],
+			[
+				"hist",
+				"histSize"
+			],
+			[
+				"cal",
+				"calcHist\tvoid calcHist(const cv::Mat *images, int nimages, const int *channels, InputArray mask, cv::SparseMat &hist, int dims, const int *histSize, const float **ranges)"
+			],
+			[
+				"Poin",
+				"Point\tPoint"
+			],
+			[
+				"poin",
+				"Point\tPoint"
+			],
+			[
+				"img",
+				"img_x\tcv::Mat img_x"
+			],
+			[
+				"cp",
+				"copyTo\tvoid copyTo(OutputArray m) const"
+			],
+			[
+				"thr",
+				"thresh_yellow\tcv::Mat thresh_yellow"
+			],
+			[
+				"bit",
+				"bitwise_and\tvoid bitwise_and(InputArray src1, InputArray src2, OutputArray dst)"
+			],
+			[
+				"dra",
+				"drawContours\tvoid drawContours(InputOutputArray image, InputArrayOfArrays contours, int contourIdx, const Scalar &color)"
+			],
+			[
+				"con",
+				"contourArea\tdouble contourArea(InputArray contour)"
+			],
+			[
+				"cou",
+				"contours"
+			],
+			[
+				"im",
+				"imread\tcv::Mat imread(const cv::String &filename)"
+			],
+			[
+				"Quaternion",
+				"Quaterniond\tQuaterniond"
+			],
+			[
+				"Uni",
+				"UnitX\tconst BasisReturnType UnitX()"
+			],
+			[
+				"An",
+				"AngleAxisd\tAngleAxisd"
+			],
+			[
+				"Matr",
+				"Matrix3d\tMatrix3d"
+			],
+			[
+				"Ve",
+				"Vector3d\tVector3d"
+			],
+			[
+				"V",
+				"Vector3d\tVector3d"
+			],
+			[
+				"clock_",
+				"clock_t\tclock_t"
+			],
+			[
+				"recv",
+				"recv_buff\tchar [80] recv_buff"
+			],
+			[
+				"input",
+				"input_size"
+			],
+			[
+				"conn",
+				"conn_writecb"
+			],
+			[
+				"inpu",
+				"input_size"
+			],
+			[
+				"event_free",
+				"event_base_free\tvoid event_base_free(struct event_base *)"
+			],
+			[
+				"inp",
+				"input_size\tsize_t input_size"
+			],
+			[
+				"enc",
+				"encode\tbool encode()"
+			],
+			[
+				"s",
+				"size\tsize_type size() const"
+			],
+			[
+				"it",
+				"iter"
+			],
+			[
+				"en",
+				"encode\tbool encode()"
+			],
+			[
+				"cJSON_AddNu",
+				"cJSON_AddNumberToObject\tcJSON * cJSON_AddNumberToObject(cJSON *const object, const char *const name, const double number)"
+			],
+			[
+				"my",
+				"mycJSON\tmycJSON::"
+			],
+			[
+				"cJSON_AddItem",
+				"cJSON_AddItemToObject\tvoid cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item)"
+			],
+			[
+				"cJSON_Cre",
+				"cJSON_CreateArray"
+			],
+			[
+				"cJSON_C",
+				"cJSON_CreateArray"
+			],
+			[
+				"cJ",
+				"cJSON_Object"
+			],
+			[
+				"cJSON_A",
+				"cJSON_AddNumberToObject\tcJSON * cJSON_AddNumberToObject(cJSON *const object, const char *const name, const double number)"
+			],
+			[
+				"cJSON_Add",
+				"cJSON_AddItemToArray\tvoid cJSON_AddItemToArray(cJSON *array, cJSON *item)"
+			],
+			[
+				"ite",
+				"item_size"
+			],
+			[
+				"dec",
+				"decode"
+			],
+			[
+				"os",
+				"ostream\tostream"
+			],
+			[
+				"ope",
+				"operator[]\tmycJSON & operator[](std::string name)"
+			],
+			[
+				"inclu",
+				"include_directories"
+			],
+			[
+				"cJSON_P",
+				"cJSON_Parse\tcJSON * cJSON_Parse(const char *value)"
+			],
+			[
+				"cJSON_AddIte",
+				"cJSON_AddItemToObject\tvoid cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item)"
+			],
+			[
+				"inc",
+				"include_directories"
+			],
+			[
+				"event_base_loo",
+				"event_base_loopexit\tint event_base_loopexit(struct event_base *, const struct timeval *)"
+			],
+			[
+				"even",
+				"event_base_dispatch\tint event_base_dispatch(struct event_base *)"
+			],
+			[
+				"LEV",
+				"LEV_OPT_REUSEABLE\tLEV_OPT_REUSEABLE"
+			],
+			[
+				"sin",
+				"sin_family\tsa_family_t sin_family"
+			],
+			[
+				"buffer",
+				"bufferevent\tbufferevent"
+			],
+			[
+				"size",
+				"size_t\tsize_t"
+			],
+			[
+				"evbu",
+				"evbuffer_lock\tvoid evbuffer_lock(struct evbuffer *buf)"
+			],
+			[
+				"event_base_lo",
+				"event_base_loopbreak\tint event_base_loopbreak(struct event_base *)"
+			],
+			[
+				"event_base",
+				"event_base_loop\tint event_base_loop(struct event_base *, int)"
+			],
+			[
+				"buff",
+				"bufferevent"
+			],
+			[
+				"stru",
+				"struct\tstruct"
+			],
+			[
+				"struct",
+				"struct\tstruct"
+			],
+			[
+				"evutil_s",
+				"evutil_socket_t\tevutil_socket_t"
+			],
+			[
+				"struc",
+				"struct\tstruct"
+			],
+			[
+				"event",
+				"event2/event.h\t/usr/local/include"
+			],
+			[
+				"lis",
+				"listener_cb"
+			],
+			[
+				"event_ba",
+				"event_base_new\tstruct event_base * event_base_new()"
+			],
+			[
+				"str",
+				"struct\tstruct"
+			],
+			[
+				"soc",
+				"asm/socket.h\t/usr/include/x86_64-linux-gnu"
+			],
+			[
+				"ros",
+				"rospubstring\tros Publisher string"
+			],
+			[
+				"ma",
+				"main\tmain()"
+			],
+			[
+				"re",
+				"result"
+			],
+			[
+				"_",
+				"_chrom_num"
+			],
+			[
+				"data",
+				"dataPoint\tstd::vector<std::pair<float, float> > dataPoint"
+			],
+			[
+				"Gr",
+				"Green\tconst cvplot::Color Green"
+			],
+			[
+				"add",
+				"addValue\tcvplot::Series & addValue(const std::vector<float> &values)"
+			],
+			[
+				"dis",
+				"dist"
+			],
+			[
+				"gen",
+				"gene1"
+			],
+			[
+				"a",
+				"assign\tvoid assign(size_type __n, const value_type &__val)"
+			],
+			[
+				"P",
+				"Popula"
+			],
+			[
+				"Po",
+				"Popula"
+			],
+			[
+				"CV8",
+				"CV_8UC1\tCV_8UC1"
+			],
+			[
+				"tran",
+				"transpose\tvoid transpose(InputArray src, OutputArray dst)"
+			],
+			[
+				"be",
+				"best"
+			],
+			[
+				"inde",
+				"indexi\tint indexi"
+			],
+			[
+				"Poi",
+				"Point2d\tPoint2d"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/main.cpp",
+			"settings":
+			{
+				"buffer_size": 7031,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "include/common.h",
+			"settings":
+			{
+				"buffer_size": 997,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/UAVSimulate.cpp",
+			"settings":
+			{
+				"buffer_size": 8558,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
+			"settings":
+			{
+				"buffer_size": 8455,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "SmithServices (Linux)",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"SmithServices (Linux)",
+					""
+				],
+				[
+					"SmithServices (Linux)",
+					"clean"
+				],
+				[
+					"SmithServices (Linux)",
+					"rebuild_cache"
+				],
+				[
+					"SmithServices (Linux)",
+					"RunService"
+				],
+				[
+					"SmithServices (Linux)",
+					"RadioInterface"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.s"
+				]
+			],
+			[
+				"SmithServices (Linux)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"SmithServices (Linux)",
+					""
+				],
+				[
+					"SmithServices (Linux)",
+					"clean"
+				],
+				[
+					"SmithServices (Linux)",
+					"rebuild_cache"
+				],
+				[
+					"SmithServices (Linux)",
+					"RunService"
+				],
+				[
+					"SmithServices (Linux)",
+					"RadioInterface"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.s"
+				]
+			],
+			[
+				"SmithServices (Linux)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"SmithServices (Linux)",
+					""
+				],
+				[
+					"SmithServices (Linux)",
+					"clean"
+				],
+				[
+					"SmithServices (Linux)",
+					"rebuild_cache"
+				],
+				[
+					"SmithServices (Linux)",
+					"RunService"
+				],
+				[
+					"SmithServices (Linux)",
+					"SerialPort"
+				],
+				[
+					"SmithServices (Linux)",
+					"RadioInterface"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/serial_listen_thread.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/timer.s"
+				]
+			],
+			[
+				"SmithServices (Linux)",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 409.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"bash",
+				"Terminal View: Open Bash Terminal"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"com",
+				"Git: Commit"
+			],
+			[
+				"add a",
+				"Git: Add All"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"bas",
+				"Terminal View: Open Bash Terminal"
+			],
+			[
+				"git add",
+				"Git: Add All"
+			],
+			[
+				"git pull",
+				"Git: Pull"
+			],
+			[
+				"pus",
+				"Git: Push"
+			],
+			[
+				"add",
+				"Git: Add Current File"
+			],
+			[
+				"catk",
+				"Build With: Catkin"
+			],
+			[
+				"clan",
+				"EasyClangComplete: Settings"
+			],
+			[
+				"ter",
+				"Terminal View: Open Bash Terminal"
+			],
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"git co",
+				"Git: Commit"
+			],
+			[
+				"git a",
+				"Git: Add All"
+			],
+			[
+				"git pus",
+				"Git: Push"
+			],
+			[
+				"git com",
+				"Git: Commit"
+			],
+			[
+				"git ad",
+				"Git: Add All"
+			],
+			[
+				"git  push",
+				"Git: Push"
+			],
+			[
+				"git  com",
+				"Git: Commit"
+			],
+			[
+				"git  ad",
+				"Git: Add Current File"
+			],
+			[
+				"git  pus",
+				"Git: Push"
+			],
+			[
+				"git  add",
+				"Git: Add All"
+			],
+			[
+				"gita",
+				"Git: Add All"
+			],
+			[
+				"clang",
+				"EasyClangComplete: Settings"
+			]
+		],
+		"width": 602.0
+	},
+	"console":
+	{
+		"height": 177.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/shisanchuan/C++work/SmithServices",
+		"/home/shisanchuan/C++work/SmithServices/include",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem",
+		"/home/shisanchuan/C++work/SmithServices/src"
+	],
+	"file_history":
+	[
+		"/home/shisanchuan/C++work/SmithServices/include/UAVSimulate.h",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/figure.cc",
+		"/home/shisanchuan/C++work/SmithServices/src/PathGeneration.cpp",
+		"/home/shisanchuan/C++work/SmithServices/src/GA.cpp",
+		"/home/shisanchuan/C++work/SmithServices/src/radio_listen_thread.cpp",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_interface.cpp",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_port.cpp",
+		"/home/shisanchuan/C++work/SmithServices/include/radio_listen_thread.h",
+		"/home/shisanchuan/C++work/SmithServices/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_packet.cpp",
+		"/home/shisanchuan/C++work/cvplot/src/demo/demo.cc",
+		"/home/shisanchuan/C++work/SmithServices/include/timer.h",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/include/radio_packet.h",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/include/radio_interface.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
+		"/home/shisanchuan/C++work/SmithServices/include/PathGeneration.h",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/color.cc",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/include/LinkList.h",
+		"/home/shisanchuan/C++work/SmithServices/src/LinkList.cpp",
+		"/home/shisanchuan/C++work/SmithServices/src/timer.cpp",
+		"/home/shisanchuan/C++work/SmithServices/include/thread_pool.h",
+		"/home/shisanchuan/C++work/SmithServices/src/UAV.cpp",
+		"/home/shisanchuan/桌面/challenge1/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/src/serial_listen_thread.cpp",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/serial_port.cpp",
+		"/home/shisanchuan/C++work/SmithServices/libHardWare/serialPort/include/serial_packet.h",
+		"/home/shisanchuan/C++work/SmithServices/src/main.cpp",
+		"/home/shisanchuan/C++work/SmithServices/include/common.h",
+		"/home/shisanchuan/C++work/SmithServices/include/uart.h",
+		"/home/shisanchuan/C++work/SmithServices/src/uart.cpp",
+		"/home/shisanchuan/C++work/SmithServices/src/Uart.cpp",
+		"/home/shisanchuan/catkin_ws/src/car_ai/include/realsense.h",
+		"/home/shisanchuan/catkin_ws/src/car_ai/include/common.h",
+		"/home/shisanchuan/catkin_ws/src/car_ai/src/detect.cpp",
+		"/home/shisanchuan/catkin_ws/src/car_ai/include/detect.h",
+		"/home/shisanchuan/catkin_ws/src/car_ai/CMakeLists.txt",
+		"/home/shisanchuan/catkin_ws/src/car_ai/src/realsense.cpp",
+		"/home/shisanchuan/catkin_ws/src/car_ai/include/uart_communication.h",
+		"/home/shisanchuan/catkin_ws/src/car_ai/src/uart_communication.cpp",
+		"/home/shisanchuan/catkin_ws/src/car_ai/src/thread_pool.cpp",
+		"/home/shisanchuan/catkin_ws/src/car_ai/launch/demo.launch",
+		"/run/user/1000/gvfs/smb-share:server=192.168.0.133,share=ssc/毕业设计/未命名文件夹/catkin_ws/src/uart_communication/src/uart_communication_node.cpp",
+		"/run/user/1000/gvfs/smb-share:server=192.168.0.133,share=ssc/C++work/CAN_Bluetooth/CMakeLists.txt",
+		"/home/shisanchuan/C++work/v04/socketAPI.cpp",
+		"/home/shisanchuan/C++work/box_detect/includes/librealsense.h",
+		"/home/shisanchuan/C++work/librealsense/include/readme.md",
+		"/home/shisanchuan/C++work/box_detect/includes/detect.h",
+		"/home/shisanchuan/C++work/box_detect/CMakeLists.txt",
+		"/home/shisanchuan/C++work/box_detect/src/box.cpp",
+		"/home/shisanchuan/C++work/box_detect/README.md",
+		"/home/shisanchuan/C++work/box_detect/src/main.cpp",
+		"/home/shisanchuan/C++work/box_detect/unity_test/savepicfromcap.cpp",
+		"/home/shisanchuan/C++work/box_detect/src/intrangdetect.cpp",
+		"/usr/include/opencv2/photo.hpp",
+		"/home/shisanchuan/C++work/box_detect/src/savepicfromcap.cpp",
+		"/home/shisanchuan/C++work/box_detect/head_camera.yaml",
+		"/home/shisanchuan/C++work/box_detect/src/adjustfindhsv.cpp",
+		"/home/shisanchuan/C++work/opencvtest/intrangdetect.cpp",
+		"/home/shisanchuan/C++work/opencvtest/camer_fix.cpp",
+		"/home/shisanchuan/C++work/box_detect/src/CMakeLists.txt",
+		"/home/shisanchuan/C++work/opencvtest/opencv_test.cpp",
+		"/home/shisanchuan/C++work/RemortCamerConnect_ARM-PC/TCP/src/mytcp.cpp",
+		"/home/shisanchuan/C++work/RemortCamerConnect_ARM-PC/camer_pi_TCP.cpp",
+		"/home/shisanchuan/C++work/Octopus_learing/CMakeLists.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/src/_libevent.cpp",
+		"/home/shisanchuan/C++work/Octopus_learing/includes/common.h",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/server.cpp",
+		"/home/shisanchuan/C++work/RemortCamerConnect_ARM-PC/camer_pc_TCP.cpp",
+		"/home/shisanchuan/C++work/doushicaji/CMakeLists.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/libevent/sample/hello-world.c",
+		"/home/shisanchuan/C++work/libmsc/TX2关于科大讯飞语音动态库/相关网页（需注册科大讯飞论坛账号）.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/libevent/bufferevent.c",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/cJSONtest/cJSON_test.cpp",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/cJSONtest/CMakeLists.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/CMakeLists.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/cJSON_test/CMakeLists.txt",
+		"/home/shisanchuan/C++work/Octopus_learing/includes/mycJSON.h",
+		"/home/shisanchuan/C++work/Octopus_learing/unit_test/cJSON_test/cJSON_test.cpp",
+		"/home/shisanchuan/C++work/Octopus_learing/libevent/CMakeLists.txt",
+		"/home/shisanchuan/C++work/linuxserver/libevent.cpp",
+		"/home/shisanchuan/C++work/Octopus_learing/src/CMakeLists.txt",
+		"/home/shisanchuan/C++work/ncnn/src/layer.h",
+		"/home/shisanchuan/C++work/ncnn/examples/CMakeLists.txt",
+		"/home/shisanchuan/catkin_ws/src/press_sensor/package.xml",
+		"/home/shisanchuan/catkin_ws/src/motor_control/src/motor_contorl_node.cpp",
+		"/home/shisanchuan/catkin_ws/src/press_sensor/CMakeLists.txt",
+		"/home/shisanchuan/catkin_ws/src/press_sensor/src/press_sensor_node.cpp",
+		"/home/shisanchuan/catkin_ws/src/press_sensor/press_sensor_node.cpp",
+		"/home/shisanchuan/Arduino/libraries/MPU6050/MPU6050.cpp",
+		"/home/shisanchuan/Arduino/libraries/MPU6050/MPU6050.h",
+		"/home/shisanchuan/Arduino/libraries/MPU6050/MPU6050_6Axis_MotionApps20.h",
+		"/home/shisanchuan/catkin_ws/src/mpu6050_serial_to_imu/src/mpu6050_serial_to_imu_node.cpp",
+		"/home/shisanchuan/catkin_ws/src/mpu6050_serial_to_imu/launch/demo.launch",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA_TSP.cpp",
+		"/home/shisanchuan/C++work/bulid_tree.cpp",
+		"/home/shisanchuan/C++work/mlpacktest.cpp",
+		"/media/shisanchuan/C2B31627EFFD64AE/2018/mark.py",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/QGA.cpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/figure.h",
+		"/home/shisanchuan/.cache/.fr-1M0XA9/chapter10/main.m",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/CMakeLists.txt",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/demo.h",
+		"/home/shisanchuan/.config/sublime-text-3/Packages/User/C++.sublime-build",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/E_GA.cpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/build/src/point.txt",
+		"/home/shisanchuan/C++work/darknet/python/darknet.py",
+		"/media/shisanchuan/Ubuntu 16.0/predata.m",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/build/src/adjust_data.txt",
+		"/home/shisanchuan/matlab_work/2017E/predata.m",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/cvplotlib/figure.cc",
+		"/home/shisanchuan/GeneticAlgorithm/build/src/adjust_data.txt",
+		"/usr/include/opencv2/core/mat.hpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA.cpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA_BP.cpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/GA.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/CMakeLists.txt",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/README.md",
+		"/home/shisanchuan/.config/sublime-text-3/Packages/User/SublimeGDB.sublime-settings",
+		"/home/shisanchuan/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
+		"/usr/include/c++/5/bits/stl_algo.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/internal.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/CMakeLists.txt",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/window.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/GeneticAlgorithmByC++.sublime-project",
+		"/home/shisanchuan/C++work/GeneticAlgorithmByC++/src/cvplotlib/figure.cc"
+	],
+	"find":
+	{
+		"height": 47.0
+	},
+	"find_in_files":
+	{
+		"height": 501.851851852,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"printf",
+			"Smith",
+			"Dots",
+			"dataSend",
+			"run",
+			"Worker",
+			"Workrun",
+			"wmut",
+			"radio",
+			"situation",
+			"ROBOT_MODE_IN_CATCH",
+			"getUAV",
+			"timer_thread",
+			"recode",
+			"float",
+			"aim",
+			");\n",
+			"lock(mut);",
+			"lock(mut)",
+			"mut",
+			"Posion",
+			"hs",
+			"mIsOpen",
+			"UAV",
+			"ROBOT_MODE",
+			"}\n",
+			"Device_size",
+			"value1",
+			"Posion",
+			"bool",
+			"device"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/main.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7031,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1333,
+								1333
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 44,
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 596.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "include/common.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 997,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								363,
+								363
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 16,
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 180.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"file": "src/UAVSimulate.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8558,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4087,
+								4087
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 106,
+							"git_gutter_is_enabled": false,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1941.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8455,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1994,
+								1994
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 69,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 900.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 29.0
+	},
+	"input":
+	{
+		"height": 224.074074074
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.347115459642,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 174.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "SmithServices (Linux)",
+	"project": "SmithServices.sublime-project",
+	"replace":
+	{
+		"height": 54.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"motor_control/src/motor.cpp"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 432.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 728.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 163.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
