@@ -23,25 +23,30 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	std::string name = "SmithService";
 	cvplot::setWindowTitle(name,"origin curve");
 	cvplot::moveWindow(name, 0, 0);
-	cvplot::resizeWindow(name, 800, 480);//*8
+	cvplot::resizeWindow(name, 1200, 720);//*8 240*3
 	auto &figure=cvplot::figure(name);
 	while(flag){
 		figure.clear();
 		{
 			std::vector<std::pair<float, float> > UAVdata;
+			std::vector<std::pair<float, float> > UAVfiled;
 			std::vector<std::pair<float, float> > AIMdata;
 			std::vector<std::pair<float, float> > BALLONdata;
 			std::vector<std::pair<float, float> > Genpathdata;
 
 			std::vector<std::pair<float, float> > Actualpathdata;
 			std::vector<std::pair<float, float> > ActualAIMdata;
-			{
+			{//UAV数据
+			    figure.series("filed").type(cvplot::Circle).color(cvplot::Purple.alpha(192));
 				for(int i=0x01;i<0x08;i=i<<1){
 					auto data = radio.GetUAVPosion(Marker(i));
 					UAVdata.push_back(std::pair<float,float>(data.X,data.Y));
+					figure.series("filed").add(data.X,{data.Y,UAV_filed*2 } );
 				}	
-				UAVdata.push_back(std::pair<float, float>(800,480));
+				UAVdata.push_back(std::pair<float, float>(map_length,map_width));
+
 			}
+			//模拟数据
 			if((aim&0xf0) == ROBOT_MODE_IN_CATCH||(aim&0xf0) ==ROBOT_MODE_IN_RETURN){
 				if(Smith!=0xff){
 					auto data = radio.GetUAVPosion(Marker(Smith));
@@ -51,7 +56,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
 				}
 			}
-			{
+			{//模拟的寻找飞机数据
 				UAVSimulate *aim  = Simulate::getUAV(AIM);
 				for(auto &p:aim->path){
 					Actualpathdata.push_back(std::pair<float, float>(p.X,p.Y));
@@ -116,26 +121,35 @@ int main(int argc, const char** argv)
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
 #ifdef SIMULATE
 	Simulate::init(pool,"/dev/ttyUSB1");//模拟器 UAV
-	for(int i=0x01;i<0x08;i=i<<1){
-		auto tmp = Simulate::addUAV(Marker(i));
-		tmp->init(pool, &Simulate::Radio);
-	}
+	Simulate::addUAV(UAV1)->init(pool,&Simulate::Radio,Value3(16.666666,0,0));
+	Simulate::addUAV(UAV2)->init(pool,&Simulate::Radio,Value3(49.999999,0,0));
+	Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio,Value3(83.333332,0,0));
 	{
 		auto tmp = Simulate::addUAV(AIM);
-		tmp->init(pool, &Simulate::Radio,PathGeneration(200,200,400,240));
+		tmp->init(pool, &Simulate::Radio,PathGeneration(40,40,map_length/2,map_width/2));
 	}
 #endif
 	pool.enqueue(draw_pic,radio_thread,50);
-	for(int i=0x01;i<0x08;i=i<<1){//命令启动
-		UAV data(ROBOT_MODE_IN_INIT|i);
-		data.Posion.X = rand()%800;
-		data.Posion.Y = rand()%480;
-		data.Posion.Z = 0;
-		radio_thread.SetUAVData(Marker(i),data);
+	{
+		UAV data(ROBOT_MODE_IN_INIT|UAV1);
+		data.Posion = Value3(16.666666,20,10);
+		radio_thread.SetUAVData(UAV1,data);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	{
+		UAV data(ROBOT_MODE_IN_INIT|UAV2);
+		data.Posion = Value3(49.999999,20,10);
+		radio_thread.SetUAVData(UAV2,data);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	{
+		UAV data(ROBOT_MODE_IN_INIT|UAV3);
+		data.Posion = Value3(83.333332,20,10);
+		radio_thread.SetUAVData(UAV3,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	while(1){
-
+		//未完成
 		std::this_thread::sleep_for(std::chrono::seconds(2));
 	}
 	return 0;

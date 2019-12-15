@@ -39,8 +39,8 @@ static void Workrun(RadioInterface *Radio,UAVSimulate** Worker){
 	flag = false;
 }
 void run(RadioInterface *Radio,UAVSimulate *Suav){
-	float speed = 0.0083;//飞行速度 km/h -> 1/360 m/ms 
-	float field = 80;	 // 可以看见球的范围
+	float speed = UAV_speed;//飞行速度 km/h -> 1/360 m/ms 
+	float field = UAV_filed;	 // 可以看见球的范围
 	Value3 backaim;
 	//返回点
 	backaim.X = 0;
@@ -79,18 +79,20 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 				    Radio->dataSend(sendPacket);
 				}
 				else if(dis<field){
+					UAVSimulate* aim = Simulate::getUAV(AIM);
 					float radio = (speed*50)/dis;
 					Suav->uav.Posion.X = Suav->uav.Posion.X + (aim->uav.Posion.X - Suav->uav.Posion.X)*radio;
 					Suav->uav.Posion.Y = Suav->uav.Posion.Y + (aim->uav.Posion.Y - Suav->uav.Posion.Y)*radio;
 					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (aim->uav.Posion.Z - Suav->uav.Posion.Z)*radio;
 					printf("%f %f %f\n",Suav->uav.Posion.X,Suav->uav.Posion.Y,Suav->uav.Posion.Z);
 					//发送目标坐标系
-					// RadioPacket sendPacket;
-					// sendPacket.creatPacket(ROBOT_MODE_IN_CATCH|AIM);
-				 //    sendPacket.setFloatInBuffer(aim->uav.Posion.X, 2);
-				 //    sendPacket.setFloatInBuffer(aim->uav.Posion.Y, 6);
-				 //    sendPacket.setFloatInBuffer(aim->uav.Posion.Z, 10);
-				 //    Radio->dataSend(sendPacket);
+					RadioPacket sendPacket;//发送目标飞机距离需要计算
+					sendPacket.creatPacket(ROBOT_MODE_IN_CATCH|AIM);
+				    sendPacket.setFloatInBuffer(aim->uav.Posion.X, 2);
+				    sendPacket.setFloatInBuffer(aim->uav.Posion.Y, 6);
+				    sendPacket.setFloatInBuffer(aim->uav.Posion.Z, 10);
+				    Radio->dataSend(sendPacket);
+				    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				}else {//按照原来点移动 丢球了
 					dis = distance(Suav->UAV_AIM,Suav->uav.Posion);
 					float radio = (speed*50)/dis;
@@ -98,7 +100,6 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					Suav->uav.Posion.Y = Suav->uav.Posion.Y + (Suav->UAV_AIM.Y - Suav->uav.Posion.Y)*radio;
 					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (Suav->UAV_AIM.Z - Suav->uav.Posion.Z)*radio;
 					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_MOVE;
-					std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				}
 				break;
 			}
@@ -140,7 +141,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 	flag =false;
 }
 void runwithpath(UAVSimulate *Suav){
-	float speed = 0.008;//飞行速度
+	float speed = 0.002;//飞行速度
 	float dis;
 	uint8_t situation;
 	int64_t m = rand()%(Suav->path.size());
@@ -243,11 +244,9 @@ UAVSimulate* Simulate::getUAV(Marker ID){
 	return nullptr;
 }
 
-void UAVSimulate::init(ThreadPool &pool,RadioInterface *Radio){
+void UAVSimulate::init(ThreadPool &pool,RadioInterface *Radio,Value3 start){
 	uav.situation = 0xff;
-	uav.Posion.X = 0;
-	uav.Posion.Y = 0;
-	uav.Posion.Z = 0;
+	uav.Posion = start;
 	pool.enqueue(run,Radio, this);//由于已经初始化
 	return ;
 }

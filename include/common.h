@@ -6,8 +6,19 @@
 #include <sys/time.h>
 #include <cmath>
 #include <assert.h>
+
+
 #define Device_size 9
 #define pi 3.1415926
+
+//Size
+#define map_width 40
+#define map_length 100
+
+//UAV
+#define UAV_filed 11.54 //视野范围
+#define UAV_speed 0.006 //速度
+
 #define BALLON_size 6
 extern int flag;
 
@@ -28,8 +39,13 @@ typedef enum:unsigned char
 	AIM = 0x08
 }Marker;
 
-typedef struct 
+typedef struct Value3
 {
+	Value3(float X=0,float Y=0,float Z=0){
+		this->X=X;
+		this->Y=Y;
+		this->Z=Z;
+	}
 	float X;
 	float Y;
 	float Z;

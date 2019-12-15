@@ -19,14 +19,10 @@ static void run(RadioInterface *Radio,UAV *devices){
                     std::cerr<<"error data?"<<std::endl;
                 }else{
                     std::lock_guard<std::mutex> lock(rmut);
-                    if((CMD&0xf0) == CMD_IN_MOVE){
-                        devices[device].Posion.X =  recvPacket.getFloatInBuffer(2);
-                        devices[device].Posion.Y =  recvPacket.getFloatInBuffer(6);
-                        devices[device].Posion.Z =  recvPacket.getFloatInBuffer(10);
-                        devices[device].situation =  CMD_IN_MOVE;
-                    }else{
-                        devices[device].situation =  (CMD&0xf0);
-                    }
+                    devices[device].Posion.X =  recvPacket.getFloatInBuffer(2);
+                    devices[device].Posion.Y =  recvPacket.getFloatInBuffer(6);
+                    devices[device].Posion.Z =  recvPacket.getFloatInBuffer(10);
+                    devices[device].situation =  (CMD&0xf0);
                     devices[device].update = true;                 
                 }
             } 

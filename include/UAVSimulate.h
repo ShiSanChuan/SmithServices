@@ -12,7 +12,7 @@ public:
 	Value3 UAV_AIM;
 	std::vector<Value3> path;
 public:
-	void init(ThreadPool &pool,RadioInterface *Radio);//追寻机 按照命令和查找动作运动
+	void init(ThreadPool &pool,RadioInterface *Radio,Value3 start=Value3(0,0,0));//追寻机 按照命令和查找动作运动
 	void init(ThreadPool &pool,RadioInterface *Radio,std::vector<Value3> path);//沿轨迹运动 目标机
 	void update();
 	void SetPosion(Value3 data);
