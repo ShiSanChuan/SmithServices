@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "common.h"
 #include "thread_pool.h"
 #include "radio_listen_thread.h"
@@ -11,6 +12,15 @@ static unsigned char S=0x00;
 static unsigned char uav[16]={0};
 static unsigned char aim=0x00;
 static uint8_t Smith=0xff;
+//Size
+float map_width = 40;
+float map_length = 100;
+//UAV
+float UAV_filed = 11.54; //视野范围
+float UAV_speed = 0.006; //速度
+int BALLON_num = 6;
+float Simulate_speed = 0.002;
+
 static float distance(Value3 v1,Value3 v2){
 	float dx = v1.X - v2.X;
 	float dy = v1.Y - v2.Y;
@@ -116,35 +126,57 @@ auto time_chech_UAV = [](RadioListen &radio,int msec){
 int main(int argc, const char** argv)
 {
 	srand(time(NULL));
+
+	if(argc<2){
+		std::cout<<"./exe yaml_path";
+		return 0;
+	}
+	std::string yamlpath(argv[1]);
+	YAML::Node config = YAML::LoadFile(yamlpath);
+	std::string Listen_port = config["Listen_port"].as<std::string>();
+	std::string Simulate_port = config["Simulate_port"].as<std::string>();
+	map_width = config["map_width"].as<float>();
+	map_length = config["map_length"].as<float>();
+	UAV_filed = config["UAV_filed"].as<float>(); //视野范围
+	UAV_speed = config["UAV_speed"].as<float>(); //速度
+	BALLON_num = config["BALLON_num"].as<float>();
+	Simulate_speed = config["Simulate_speed"].as<float>();
+
     ThreadPool pool(30);
-	RadioListen radio_thread(pool,"/dev/ttyUSB0");
+	RadioListen radio_thread(pool,Listen_port);
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
 #ifdef SIMULATE
-	Simulate::init(pool,"/dev/ttyUSB1");//模拟器 UAV
-	Simulate::addUAV(UAV1)->init(pool,&Simulate::Radio,Value3(16.666666,0,0));
-	Simulate::addUAV(UAV2)->init(pool,&Simulate::Radio,Value3(49.999999,0,0));
-	Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio,Value3(83.333332,0,0));
-	{
-		auto tmp = Simulate::addUAV(AIM);
-		tmp->init(pool, &Simulate::Radio,PathGeneration(40,40,map_length/2,map_width/2));
-	}
+	Simulate::init(pool,Simulate_port);//模拟器 UAV
+	if(config["UAV1"])
+		Simulate::addUAV(UAV1)->init(pool,&Simulate::Radio,config["start_point1"].as<Value3>());
+	if(config["UAV2"])
+		Simulate::addUAV(UAV2)->init(pool,&Simulate::Radio,config["start_point2"].as<Value3>());
+	if(config["UAV3"])
+		Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio,config["start_point3"].as<Value3>());
+	if(config["Simulate_AIM"])
+		Simulate::addUAV(AIM)->init(pool, &Simulate::Radio,
+			PathGeneration(config["a"].as<float>(),
+							config["b"].as<float>(),
+							config["c"].as<float>(),
+							config["d"].as<float>()));
+
 #endif
 	pool.enqueue(draw_pic,radio_thread,50);
-	{
+	if(config["UAV1"]){
 		UAV data(ROBOT_MODE_IN_INIT|UAV1);
-		data.Posion = Value3(16.666666,20,10);
+		data.Posion = config["first_point1"].as<Value3>();
 		radio_thread.SetUAVData(UAV1,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	{
+	if(config["UAV2"]){
 		UAV data(ROBOT_MODE_IN_INIT|UAV2);
-		data.Posion = Value3(49.999999,20,10);
+		data.Posion = config["first_point2"].as<Value3>();
 		radio_thread.SetUAVData(UAV2,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	{
+	if(config["UAV3"]){
 		UAV data(ROBOT_MODE_IN_INIT|UAV3);
-		data.Posion = Value3(83.333332,20,10);
+		data.Posion = config["first_point3"].as<Value3>();
 		radio_thread.SetUAVData(UAV3,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}

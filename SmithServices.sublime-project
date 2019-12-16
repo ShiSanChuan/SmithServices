@@ -29,6 +29,134 @@
 					"shell_cmd": "make -j4 RadioInterface"
 				},
 				{
+					"name": "yaml-cpp",
+					"shell_cmd": "make -j4 yaml-cpp"
+				},
+				{
+					"name": "ContinuousSubmit",
+					"shell_cmd": "make -j4 ContinuousSubmit"
+				},
+				{
+					"name": "ContinuousCoverage",
+					"shell_cmd": "make -j4 ContinuousCoverage"
+				},
+				{
+					"name": "ContinuousTest",
+					"shell_cmd": "make -j4 ContinuousTest"
+				},
+				{
+					"name": "ContinuousBuild",
+					"shell_cmd": "make -j4 ContinuousBuild"
+				},
+				{
+					"name": "ContinuousMemCheck",
+					"shell_cmd": "make -j4 ContinuousMemCheck"
+				},
+				{
+					"name": "Nightly",
+					"shell_cmd": "make -j4 Nightly"
+				},
+				{
+					"name": "NightlyTest",
+					"shell_cmd": "make -j4 NightlyTest"
+				},
+				{
+					"name": "NightlyUpdate",
+					"shell_cmd": "make -j4 NightlyUpdate"
+				},
+				{
+					"name": "Continuous",
+					"shell_cmd": "make -j4 Continuous"
+				},
+				{
+					"name": "NightlyBuild",
+					"shell_cmd": "make -j4 NightlyBuild"
+				},
+				{
+					"name": "NightlyStart",
+					"shell_cmd": "make -j4 NightlyStart"
+				},
+				{
+					"name": "NightlyMemoryCheck",
+					"shell_cmd": "make -j4 NightlyMemoryCheck"
+				},
+				{
+					"name": "NightlyMemCheck",
+					"shell_cmd": "make -j4 NightlyMemCheck"
+				},
+				{
+					"name": "ExperimentalStart",
+					"shell_cmd": "make -j4 ExperimentalStart"
+				},
+				{
+					"name": "ContinuousConfigure",
+					"shell_cmd": "make -j4 ContinuousConfigure"
+				},
+				{
+					"name": "NightlyCoverage",
+					"shell_cmd": "make -j4 NightlyCoverage"
+				},
+				{
+					"name": "ExperimentalUpdate",
+					"shell_cmd": "make -j4 ExperimentalUpdate"
+				},
+				{
+					"name": "ExperimentalConfigure",
+					"shell_cmd": "make -j4 ExperimentalConfigure"
+				},
+				{
+					"name": "ExperimentalCoverage",
+					"shell_cmd": "make -j4 ExperimentalCoverage"
+				},
+				{
+					"name": "ExperimentalBuild",
+					"shell_cmd": "make -j4 ExperimentalBuild"
+				},
+				{
+					"name": "NightlyConfigure",
+					"shell_cmd": "make -j4 NightlyConfigure"
+				},
+				{
+					"name": "ExperimentalTest",
+					"shell_cmd": "make -j4 ExperimentalTest"
+				},
+				{
+					"name": "ExperimentalMemCheck",
+					"shell_cmd": "make -j4 ExperimentalMemCheck"
+				},
+				{
+					"name": "Experimental",
+					"shell_cmd": "make -j4 Experimental"
+				},
+				{
+					"name": "NightlySubmit",
+					"shell_cmd": "make -j4 NightlySubmit"
+				},
+				{
+					"name": "ExperimentalSubmit",
+					"shell_cmd": "make -j4 ExperimentalSubmit"
+				},
+				{
+					"name": "ContinuousStart",
+					"shell_cmd": "make -j4 ContinuousStart"
+				},
+				{
+					"name": "ContinuousUpdate",
+					"shell_cmd": "make -j4 ContinuousUpdate"
+				},
+				{
+					"name": "yaml-cpp-sandbox",
+					"shell_cmd": "make -j4 yaml-cpp-sandbox"
+				},
+				{
+					"name": "yaml-cpp-parse",
+					"shell_cmd": "make -j4 yaml-cpp-parse"
+				},
+				{
+					"name": "yaml-cpp-read",
+					"shell_cmd": "make -j4 yaml-cpp-read"
+				},
+				{
 					"name": "src/GA.o",
 					"shell_cmd": "make -j4 src/GA.o"
 				},

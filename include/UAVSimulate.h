@@ -30,6 +30,7 @@ public:
 	static void init(ThreadPool &pool,std::string port="/dev/ttyUSB1");
 	static UAVSimulate * addUAV(Marker ID);
 	static UAVSimulate* getUAV(Marker ID);
+	static void SendPack(uint8_t CMD,Value3 data);
 	void close();
 	~Simulate();
 	

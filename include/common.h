@@ -6,20 +6,19 @@
 #include <sys/time.h>
 #include <cmath>
 #include <assert.h>
-
+#include "yaml-cpp/yaml.h"
 
 #define Device_size 9
 #define pi 3.1415926
 
 //Size
-#define map_width 40
-#define map_length 100
-
+extern float map_width ;
+extern float map_length;
 //UAV
-#define UAV_filed 11.54 //视野范围
-#define UAV_speed 0.006 //速度
-
-#define BALLON_size 6
+extern float UAV_filed ;//视野范围
+extern float UAV_speed ; //速度
+extern float Simulate_speed ;
+extern int BALLON_num ;
 extern int flag;
 
 typedef enum:unsigned char{
@@ -74,6 +73,30 @@ typedef struct LinkList
 	Value3 data;
 	LinkList * next;
 }LinkList;
+
+namespace YAML {//解析用
+	template<>
+	struct convert<Value3> {
+	  static Node encode(const Value3& rhs) {
+	    Node node;
+	    node.push_back(rhs.X);
+	    node.push_back(rhs.Y);
+	    node.push_back(rhs.Z);
+	    return node;
+	  }
+
+	  static bool decode(const Node& node, Value3& rhs) {
+	    if(!node.IsSequence() || node.size() != 3) {
+	      return false;
+	    }
+
+	    rhs.X = node[0].as<double>();
+	    rhs.Y = node[1].as<double>();
+	    rhs.Z = node[2].as<double>();
+	    return true;
+	  }
+	};
+}
 
 
 #endif

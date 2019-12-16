@@ -28,7 +28,7 @@ std::vector<Value3> BallonGeneration(int width,int length){
 	std::vector<Value3> Point;
 	Value3 tmp;
 	float high = 10;
-	for(int i=0;i<BALLON_size;i++){
+	for(int i=0;i<BALLON_num;i++){
 		tmp.X = rand()%length;
 		tmp.Y = rand()%width;
 		tmp.Z = high;
