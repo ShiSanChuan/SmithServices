@@ -11,6 +11,7 @@ void run(GA *pso){
 				pso->init();
 				start = true;
 			}else{
+				std::lock_guard<std::mutex> lock(mut);
 				pso->ranking();
 				pso->update(0);
 			}
@@ -28,9 +29,11 @@ GA::GA(int para_num,float dmin,float dmax,
 	fun = _fun;
 	this->dmin = dmin;
 	this->dmax = dmax;
-	chrom_num = 100;
-	c1 = 0.8;
-	c2 = 0.8;
+	chrom_num = 500;
+	c1 = 2;
+	c2 = 2;
+	k = 1;
+	w = 0.9;
 	Accuracy = INT16_MAX;
 	this->para_num = para_num;
 	speed = cv::Mat(cv::Size(para_num,chrom_num),CV_32FC1,cv::Scalar(0));
@@ -38,7 +41,14 @@ GA::GA(int para_num,float dmin,float dmax,
 	ost=std::vector<float>(chrom_num,0);
 	post=std::vector<float>(chrom_num,0);
 	cv::RNG rng(time(NULL));
-	rng.fill(Population, cv::RNG::NORMAL,dmin ,dmax);//接近高斯分布
+	// rng.fill(Population, cv::RNG::NORMAL,(dmax-dmin)/2 + dmin , 50 );//接近高斯分布
+	rng.fill(Population, cv::RNG::UNIFORM,dmin ,dmax );
+	for(int i=0;i<chrom_num;i++){
+		Population.at<float>(i,0) = (int)Population.at<float>(i,0)%(int)(map_width*2);
+		Population.at<float>(i,1) = (int)Population.at<float>(i,1)%(int)(map_width*2);
+		Population.at<float>(i,2) = (int)Population.at<float>(i,2)%(int)map_width;
+		Population.at<float>(i,3) = (int)Population.at<float>(i,3)%(int)map_length;
+	}
 	rng.fill(speed, cv::RNG::UNIFORM,0 , 0.5);//速度不是
 	Population.copyTo(Pbest);
 
@@ -53,12 +63,18 @@ std::vector<float> GA::GetOptimal(){
 	return Gbest;
 }
 void GA::addPoint(Value3 point){
-	// std::lock_guard<std::mutex> lock(rmut);
-	// 
+	std::lock_guard<std::mutex> lock(mut);
 	if(data.size()&&(distance(data.back(),point)>0.01)){
 		data.push_back(point);
 	}else if(!data.size()){
 		data.push_back(point);
+		for(int i=0;i<chrom_num;i+=1){
+			Population.at<float>(i,0) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)(map_width*2);
+			Population.at<float>(i,1) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)(map_width*2);
+			Population.at<float>(i,2) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)map_width;
+			Population.at<float>(i,3) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)map_length;
+		}
+		w=0.9;
 	}
 }
 void GA::init(){
@@ -80,11 +96,11 @@ void GA::ranking(){
 		std::vector<float> argv;
 		for(int j=0;j<para_num;j++){
 			//更新速度 updata speed
-			speed.at<float>(i,j)=(float)(speed.at<float>(i,j)+
-				c1*(Gbest[j]-Population.at<float>(i,j))*(float)(rand()%100)/100+
-				c2*(Pbest.at<float>(i,j)-Population.at<float>(i,j))*(float)(rand()%100)/100    );
+			speed.at<float>(i,j)=(float)(w*speed.at<float>(i,j)+
+				c1*(Gbest[j]-Population.at<float>(i,j))*(float)(rand()%1000)/1000+
+				c2*(Pbest.at<float>(i,j)-Population.at<float>(i,j))*(float)(rand()%1000)/1000);
 			//更新位置 update site
-			Population.at<float>(i,j)=(float)Population.at<float>(i,j)+0.5*(float)(speed.at<float>(i,j));
+			Population.at<float>(i,j)=(float)Population.at<float>(i,j)+k*(float)(speed.at<float>(i,j));
 			if((float)Population.at<float>(i,j)>dmax)
 				Population.at<float>(i,j)=dmax;
 			if((float)Population.at<float>(i,j)<dmin)
@@ -97,17 +113,18 @@ void GA::ranking(){
 void GA::update(bool para){
 	int gbb=fun(Gbest,data);
 	for(int i=0;i<chrom_num;i++){
-		if((ost[i]>post[i])^para){
+		if((ost[i]>post[i])^para){//若参数小于局部最优，参数被局部数据取代
 			for(int j=0;j<para_num;j++)
 				Pbest.at<float>(i,j)=(float)Population.at<float>(i,j);
 			ost[i]=post[i];
 		}
-		if((post[i]<gbb)^para){
+		if((post[i]<gbb)^para){//比全局最优
 			for(int j=0;j<para_num;j++)
 				Gbest[j]=(float)Population.at<float>(i,j);
 			gbb=post[i];
 		}
 	}
+	w = w - (std::exp(w-0.4)-1)/2;
 }
 
 GA* FactoryGA::addSolve(std::string name,int para_num,

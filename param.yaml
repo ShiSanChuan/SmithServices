@@ -6,12 +6,12 @@ AIMUAV_num: 1
 
 #uart information
 ##/dev/pts/23
-Listen_port : /dev/pts/23
+Listen_port : /dev/pts/20
 #/dev/pts/24
-Simulate_port : /dev/pts/24
+Simulate_port : /dev/pts/21
 #UAV information
 UAV_filed: &1 11.539999999999999
-UAV_speed: &2 0.0060000000000000001
+UAV_speed: &2 0.0030000000000000001
 #UAV1 information
 start_point1: &3 
   - 16.666666

@@ -26,44 +26,45 @@ std::vector<Value3> PathGeneration(float a,float b,float c, float d){
 
 float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
-	float error = 0.0;
+	double error = 0.0;
 	float x = 0.0;
 	float y = 0.0;
-	float y2 = 0.0;
+	float x2 = 0.0;
 	float tmp1;
 	float tmp2;
 	float tmp3;
 	float tmp4;
 	int size = data.size();//没有加锁，因此不能多变
-	for(int i=0;i<size;i++){
-		float minx = INT16_MAX;
-		y = (data[i].Y-argv[3])/argv[1];
-		x = (data[i].X-argv[2])/argv[0];
-		y2 = y*y;
-		tmp1 = std::sqrt(1-8*y*y);
-		tmp2 = 1-2*y*y - tmp1;
-		tmp3 = 1-2*y*y + tmp1;
-		if(tmp2>0){
-			tmp4 = std::sqrt(tmp2/2);
-			if(minx>std::abs(tmp4-x)){
-				minx = std::abs(tmp4-x);
-			}
-			if(minx>std::abs(-tmp4-x) ){
-				minx = std::abs(-tmp4-x);
+	if((0<(argv[2]-argv[0]))&&
+		((argv[0]+argv[2])<map_length)&&
+		(0<(argv[3]-argv[1]))&&
+		((argv[3]+argv[1])<map_width)){
+		for(int i=0;i<size;i++){
+			float minx = INT16_MAX;
+			if((argv[2]-argv[0]<=data[i].X&&(data[i].X<=(argv[0]+argv[2])))
+				&&((argv[3]-argv[1]*0.3536)<data[i].Y&&(data[i].Y<(argv[3]+argv[1]*0.3536)))){//上下界
+				y = (data[i].Y-argv[3])/argv[1];
+				x = (data[i].X-argv[2])/argv[0];
+				x2 = x*x;
+				tmp1 = std::sqrt(1+8*x2);
+				tmp2 = (-2*x2-1 + tmp1)/2;
+				if(tmp2>0){
+					tmp3 = std::sqrt(tmp2);
+					tmp4 = (tmp3-x)* argv[0]+argv[2];//还原误差
+					if(minx>tmp4*tmp4){//最小误差
+						minx = tmp4*tmp4;
+					}
+					tmp4 = (-tmp3-x)* argv[0]+argv[2];
+					if(minx>tmp4*tmp4 ){
+						minx = tmp4*tmp4;
+					}
+				}
+				error+=minx;
+			}else {
+				return INT16_MAX;
 			}
 		}
-		if(tmp3>0){
-			tmp4 = std::sqrt(tmp3/2);
-			if(minx>std::abs(tmp4-x)){
-				minx = std::abs(tmp4-x);
-			}
-			if(minx>std::abs(-tmp4-x) ){
-				minx = std::abs(-tmp4-x);
-			}
-		}
-		if(minx!=INT16_MAX)
-			error+=minx;
-	}
+	}else return INT16_MAX;
 	return error/size;
 }
 

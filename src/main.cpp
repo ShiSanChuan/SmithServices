@@ -38,7 +38,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	cvplot::resizeWindow(PSO, 360, 360);
 	auto &PSOfigure=cvplot::figure(PSO);
 	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
-
+	std::vector<std::pair<float, float> > Genpathdata;
 	while(flag){
 		figure.clear();
 		{
@@ -46,7 +46,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			std::vector<std::pair<float, float> > UAVfiled;
 			std::vector<std::pair<float, float> > AIMdata;
 			std::vector<std::pair<float, float> > BALLONdata;
-			std::vector<std::pair<float, float> > Genpathdata;
+			
 
 			std::vector<std::pair<float, float> > Actualpathdata;
 			std::vector<std::pair<float, float> > ActualAIMdata;
@@ -55,7 +55,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				for(int i=0x01;i<0x08;i=i<<1){
 					auto data = radio.GetUAVPosion(Marker(i));
 					UAVdata.push_back(std::pair<float,float>(data.X,data.Y));
-					figure.series("filed").add(data.X,{data.Y,UAV_filed*2 } );
+					figure.series("filed").add(data.X,{data.Y,UAV_filed*4 } );
 				}	
 				UAVdata.push_back(std::pair<float, float>(map_length,map_width));
 
@@ -68,17 +68,22 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}else{
 					auto data = radio.GetUAVPosion(AIM);
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
-					FactoryGA::getSolve(solve_name)->addPoint(data);//添加点
+					FactoryGA::getSolve(solve_name)->addPoint(data);//添加数据点
+					
 				}
 			}
 			if(FactoryGA::getSolve(solve_name)->Accuracy<error.back().second){//生成的估计路线
 				error.push_back(std::make_pair(error.size(), FactoryGA::getSolve(solve_name)->Accuracy));
 				auto pathparam = FactoryGA::getSolve(solve_name)->GetOptimal();
-				printf("%f %f %f %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3] );
+				printf("%f %f %f %f size: %ld error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
+					FactoryGA::getSolve(solve_name)->data.size(),error.back().second);
 				auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
-				// for(auto &p:pathdata){
-				// 	figure.series("Genpathdata").addValue(1,p.Y,1); 
-				// }
+				Genpathdata.clear();
+				for(auto &p:pathdata){
+					// figure.series("Genpathdata").add(p.X,{p.Y,error.back().second } );
+					Genpathdata.push_back(std::pair<float, float>(p.X,p.Y));
+					// figure.series("Genpathdata").addValue(p.X,p.Y); 
+				}
 			}
 			{//模拟的寻找飞机数据
 				UAVSimulate *aim  = Simulate::getUAV(AIM);
@@ -95,7 +100,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			figure.series("ActualAIMdata").type(cvplot::Dots).set(ActualAIMdata).color(cvplot::Black);
 			
 			figure.series("Actualpathdata").set(Actualpathdata).color(cvplot::Gray);
-			figure.series("Genpathdata").type(cvplot::RangeLine).color(cvplot::Sky);
+			figure.series("Genpathdata").set(Genpathdata).color(cvplot::Red);
     
 			figure.border(30).show();
 		}
@@ -131,6 +136,7 @@ auto time_chech_UAV = [](RadioListen &radio,int msec){
 		}
 		if(!radio.CheckUAV(AIM)){
 			aim = ROBOT_MODE_IN_INIT|AIM;//丢失球
+			// Smith = 0xff;
 			for(int i=0x01;i<0x08;i=i<<1){
 				if(uav[i]&ROBOT_MODE_IN_RETURN ){//有返回代表抓到了气球
 					aim = ROBOT_MODE_IN_RETURN|AIM;//带着球返回了
@@ -167,7 +173,7 @@ int main(int argc, const char** argv)
     ThreadPool pool(30);//建立线程池
 	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
-	FactoryGA::addSolve(solve_name, 4, 5, 40, CostPathGeneration)->Setthread(pool);//加入求解器
+	FactoryGA::addSolve(solve_name, 4, 5, map_length, CostPathGeneration)->Setthread(pool);//加入求解器
 
 #ifdef SIMULATE
 	Simulate::init(pool,Simulate_port);//模拟器 UAV

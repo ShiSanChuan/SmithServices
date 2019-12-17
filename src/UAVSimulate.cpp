@@ -61,7 +61,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 			case ROBOT_MODE_IN_CATCH:{//抓气球
 				UAVSimulate* aim = Simulate::getUAV(AIM);
 				if((aim->uav.situation&0xf0) ==ROBOT_MODE_IN_CATCH && (aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f) )break;//已经被抓到了
-				// printf("UAV%d catchig! \n", Suav->uav.situation&0x0f);
+				// 
 				float dis = distance(aim->uav.Posion,Suav->uav.Posion);
 				if(dis<speed*50){
 					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;//speed*50 最小单位
@@ -94,10 +94,12 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 			case ROBOT_MODE_IN_MOVE:{//移动
 				{//路径中发现
 					UAVSimulate* aim = Simulate::getUAV(AIM);
-					if((aim->uav.situation&0xf0)==ROBOT_MODE_IN_CATCH&&(aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f))break;
+					if((aim->uav.situation&0xf0)==ROBOT_MODE_IN_CATCH&&//目标已被抓
+						(aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f))break;//是这个机子抓的
 					float dis = distance(aim->uav.Posion,Suav->uav.Posion);
 					if(dis<field){
 						Suav->uav.situation =(Suav->uav.situation&0x0f)|ROBOT_MODE_IN_CATCH;
+						printf("UAV%d catchig! \n", Suav->uav.situation&0x0f);
 						break;
 					}
 				}

@@ -19,6 +19,8 @@ private:
 	int para_num;
 	float c1;
 	float c2;
+	float k;
+	float w;
 	cv::Mat speed;
 	cv::Mat Population;
 	cv::Mat Pbest;//历史最佳
