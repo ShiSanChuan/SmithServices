@@ -31,7 +31,7 @@ public:
 	static UAVSimulate * addUAV(Marker ID);
 	static UAVSimulate* getUAV(Marker ID);
 	static void SendPack(uint8_t CMD,Value3 data);
-	void close();
+	static void close();
 	~Simulate();
 	
 };

@@ -1,4 +1,5 @@
 #include "UAVSimulate.h"
+#include "PathGeneration.h"
 #include <random>
 //模拟一个UAV飞行哦
 //
@@ -7,12 +8,6 @@ RadioInterface Simulate::Radio;
 static std::mutex rmut;
 static std::mutex wmut;
 UAVSimulate* Simulate::Worker[Device_size];
-static float distance(Value3 v1,Value3 v2){
-	float dx = v1.X - v2.X;
-	float dy = v1.Y - v2.Y;
-	float dz = v1.Z - v2.Z;
-	return sqrt(dx*dx+dy*dy+dz*dz);
-}
 //UAV只会收到移动的命令
 //移动命令优先级最高 
 static void Workrun(RadioInterface *Radio,UAVSimulate** Worker){
@@ -66,7 +61,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 			case ROBOT_MODE_IN_CATCH:{//抓气球
 				UAVSimulate* aim = Simulate::getUAV(AIM);
 				if((aim->uav.situation&0xf0) ==ROBOT_MODE_IN_CATCH && (aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f) )break;//已经被抓到了
-				printf("UAV%d catchig! \n", Suav->uav.situation&0x0f);
+				// printf("UAV%d catchig! \n", Suav->uav.situation&0x0f);
 				float dis = distance(aim->uav.Posion,Suav->uav.Posion);
 				if(dis<speed*50){
 					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;//speed*50 最小单位
@@ -79,9 +74,10 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					Suav->uav.Posion.X = Suav->uav.Posion.X + (aim->uav.Posion.X - Suav->uav.Posion.X)*radio;
 					Suav->uav.Posion.Y = Suav->uav.Posion.Y + (aim->uav.Posion.Y - Suav->uav.Posion.Y)*radio;
 					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (aim->uav.Posion.Z - Suav->uav.Posion.Z)*radio;
-					printf("%f %f %f\n",Suav->uav.Posion.X,Suav->uav.Posion.Y,Suav->uav.Posion.Z);
+					// printf("%f %f %f\n",aim->uav.Posion.X,aim->uav.Posion.Y,aim->uav.Posion.Z);
 					//发送目标坐标系
 					Simulate::SendPack(ROBOT_MODE_IN_CATCH|AIM, aim->uav.Posion);
+					std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				}else {//按照原来点移动 丢球了
 					dis = distance(Suav->UAV_AIM,Suav->uav.Posion);
 					float radio = (speed*50)/dis;

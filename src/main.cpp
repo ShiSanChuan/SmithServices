@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "PathGeneration.h"
 #include "cvplot.h"
+#include "GA.h"
 int flag=true;
 static unsigned char S=0x00;
 static unsigned char uav[16]={0};
@@ -20,21 +21,24 @@ float UAV_filed = 11.54; //视野范围
 float UAV_speed = 0.006; //速度
 int BALLON_num = 6;
 float Simulate_speed = 0.002;
+std::string solve_name = "PSO";
 
-static float distance(Value3 v1,Value3 v2){
-	float dx = v1.X - v2.X;
-	float dy = v1.Y - v2.Y;
-	float dz = v1.Z - v2.Z;
-	return sqrt(dx*dx+dy*dy+dz*dz);
-}
-
+//绘图
 auto draw_pic = [](RadioListen &radio,int msec){
 	//100x60
-	std::string name = "SmithService";
-	cvplot::setWindowTitle(name,"origin curve");
-	cvplot::moveWindow(name, 0, 0);
-	cvplot::resizeWindow(name, 1200, 720);//*8 240*3
-	auto &figure=cvplot::figure(name);
+	std::string curve = "SmithService";
+	cvplot::setWindowTitle(curve,"curve");
+	cvplot::moveWindow(curve, 0, 0);
+	cvplot::resizeWindow(curve, 1200, 720);//*8 240*3
+	auto &figure=cvplot::figure(curve);
+
+	std::string PSO = "PSO";
+	cvplot::setWindowTitle(PSO,"accuracy");
+	cvplot::moveWindow(PSO, 1200, 0);
+	cvplot::resizeWindow(PSO, 360, 360);
+	auto &PSOfigure=cvplot::figure(PSO);
+	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
+
 	while(flag){
 		figure.clear();
 		{
@@ -64,7 +68,17 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}else{
 					auto data = radio.GetUAVPosion(AIM);
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
+					FactoryGA::getSolve(solve_name)->addPoint(data);//添加点
 				}
+			}
+			if(FactoryGA::getSolve(solve_name)->Accuracy<error.back().second){//生成的估计路线
+				error.push_back(std::make_pair(error.size(), FactoryGA::getSolve(solve_name)->Accuracy));
+				auto pathparam = FactoryGA::getSolve(solve_name)->GetOptimal();
+				printf("%f %f %f %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3] );
+				auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
+				// for(auto &p:pathdata){
+				// 	figure.series("Genpathdata").addValue(1,p.Y,1); 
+				// }
 			}
 			{//模拟的寻找飞机数据
 				UAVSimulate *aim  = Simulate::getUAV(AIM);
@@ -81,12 +95,20 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			figure.series("ActualAIMdata").type(cvplot::Dots).set(ActualAIMdata).color(cvplot::Black);
 			
 			figure.series("Actualpathdata").set(Actualpathdata).color(cvplot::Gray);
+			figure.series("Genpathdata").type(cvplot::RangeLine).color(cvplot::Sky);
+    
 			figure.border(30).show();
+		}
+		PSOfigure.clear();
+
+		{
+			PSOfigure.series("error").set(error).color(cvplot::Orange);
+			PSOfigure.border(30).show();
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 	}
 };
-
+//定时检测
 auto time_chech_UAV = [](RadioListen &radio,int msec){
 	while(flag){
 		if(!radio.CheckUAV(UAV1)){
@@ -131,6 +153,7 @@ int main(int argc, const char** argv)
 		std::cout<<"./exe yaml_path";
 		return 0;
 	}
+	//传递参数
 	std::string yamlpath(argv[1]);
 	YAML::Node config = YAML::LoadFile(yamlpath);
 	std::string Listen_port = config["Listen_port"].as<std::string>();
@@ -141,10 +164,11 @@ int main(int argc, const char** argv)
 	UAV_speed = config["UAV_speed"].as<float>(); //速度
 	BALLON_num = config["BALLON_num"].as<float>();
 	Simulate_speed = config["Simulate_speed"].as<float>();
-
-    ThreadPool pool(30);
-	RadioListen radio_thread(pool,Listen_port);
+    ThreadPool pool(30);//建立线程池
+	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
+	FactoryGA::addSolve(solve_name, 4, 5, 40, CostPathGeneration)->Setthread(pool);//加入求解器
+
 #ifdef SIMULATE
 	Simulate::init(pool,Simulate_port);//模拟器 UAV
 	if(config["UAV1"])
@@ -161,7 +185,8 @@ int main(int argc, const char** argv)
 							config["d"].as<float>()));
 
 #endif
-	pool.enqueue(draw_pic,radio_thread,50);
+	pool.enqueue(draw_pic,radio_thread,50);//可视化
+	//启动飞机
 	if(config["UAV1"]){
 		UAV data(ROBOT_MODE_IN_INIT|UAV1);
 		data.Posion = config["first_point1"].as<Value3>();
@@ -273,7 +298,10 @@ int main(int argc, const char** argv)
 		//
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
-
+#ifdef SIMULATE
+	Simulate::close();
+#endif
+	FactoryGA::close();
     return 0;
 }
 //todo 8字模型？+ GA + 点适配进去

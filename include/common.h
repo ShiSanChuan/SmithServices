@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <cmath>
 #include <assert.h>
+#include <stdint.h>
 #include "yaml-cpp/yaml.h"
 
 #define Device_size 9
