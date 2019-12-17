@@ -4,22 +4,17 @@
 std::map<std::string,GA*> FactoryGA::GAsolve;
 static std::mutex mut;
 void run(GA *pso){
-	bool start=false;
 	while(flag){
 		if(pso->data.size()){
-			if(!start){//最初有一次最优解
+			std::lock_guard<std::mutex> lock(mut);
+			pso->ranking();
+			pso->update(0);
+			if(pso->Accuracy+1>INT16_MAX){
+				printf("rebuild\n");
 				pso->init();
-				start = true;
-			}else{
-				std::lock_guard<std::mutex> lock(mut);
-				pso->ranking();
-				pso->update(0);
 			}
 		}
-		if(!start)
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));	
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 	}
 	flag = false;
 }
@@ -35,23 +30,12 @@ GA::GA(int para_num,float dmin,float dmax,
 	k = 1;
 	w = 0.9;
 	Accuracy = INT16_MAX;
+	min_Accuracy = INT16_MAX;
 	this->para_num = para_num;
 	speed = cv::Mat(cv::Size(para_num,chrom_num),CV_32FC1,cv::Scalar(0));
 	Population = cv::Mat(cv::Size(para_num,chrom_num),CV_32FC1,cv::Scalar(0));
 	ost=std::vector<float>(chrom_num,0);
 	post=std::vector<float>(chrom_num,0);
-	cv::RNG rng(time(NULL));
-	// rng.fill(Population, cv::RNG::NORMAL,(dmax-dmin)/2 + dmin , 50 );//接近高斯分布
-	rng.fill(Population, cv::RNG::UNIFORM,dmin ,dmax );
-	for(int i=0;i<chrom_num;i++){
-		Population.at<float>(i,0) = (int)Population.at<float>(i,0)%(int)(map_width*2);
-		Population.at<float>(i,1) = (int)Population.at<float>(i,1)%(int)(map_width*2);
-		Population.at<float>(i,2) = (int)Population.at<float>(i,2)%(int)map_width;
-		Population.at<float>(i,3) = (int)Population.at<float>(i,3)%(int)map_length;
-	}
-	rng.fill(speed, cv::RNG::UNIFORM,0 , 0.5);//速度不是
-	Population.copyTo(Pbest);
-
 }
 GA::~GA(){
 
@@ -60,24 +44,31 @@ void GA::Setthread(ThreadPool &pool){
 	pool.enqueue(run, this);
 }
 std::vector<float> GA::GetOptimal(){
+	if(min_Gbest.size())return min_Gbest;
 	return Gbest;
 }
 void GA::addPoint(Value3 point){
 	std::lock_guard<std::mutex> lock(mut);
-	if(data.size()&&(distance(data.back(),point)>0.01)){
+	if(data.size()&&(distance(data.back(),point)>0.0001)){
 		data.push_back(point);
+		printf("%f %f\n",fun(Gbest,data),Accuracy );
+		if(fun(Gbest,data)>Accuracy){//新数据 模型不满足重排
+			init();
+			w=0.9;
+		}else{
+			min_Gbest = Gbest;
+		}
 	}else if(!data.size()){
 		data.push_back(point);
-		for(int i=0;i<chrom_num;i+=1){
-			Population.at<float>(i,0) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)(map_width*2);
-			Population.at<float>(i,1) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)(map_width*2);
-			Population.at<float>(i,2) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)map_width;
-			Population.at<float>(i,3) = (int)(rand()%(int)((dmax-dmin)+dmin))%(int)map_length;
-		}
-		w=0.9;
+		init();
 	}
 }
 void GA::init(){
+	cv::RNG rng(time(NULL));
+	rng.fill(Population, cv::RNG::UNIFORM,dmin ,dmax );
+	rng.fill(speed, cv::RNG::UNIFORM,0 , 0.5);//速度不是
+	Population.copyTo(Pbest);
+
 	for(int i=0,min=0;i<chrom_num;i++){
 		std::vector<float> argv;
 		for(int j=0;j<para_num;j++)
@@ -111,7 +102,8 @@ void GA::ranking(){
 	}
 }
 void GA::update(bool para){
-	int gbb=fun(Gbest,data);
+	double gbb=fun(Gbest,data);
+	Accuracy = gbb;
 	for(int i=0;i<chrom_num;i++){
 		if((ost[i]>post[i])^para){//若参数小于局部最优，参数被局部数据取代
 			for(int j=0;j<para_num;j++)

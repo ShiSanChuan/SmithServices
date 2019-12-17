@@ -13,7 +13,9 @@ class GA
 {
 public:
 	float Accuracy;
+	float min_Accuracy;
 	std::vector<Value3> data;
+	bool rebuild;
 private:
 	int chrom_num;
 	int para_num;
@@ -31,6 +33,8 @@ private:
 	float (*fun)(std::vector<float> &argv,std::vector<Value3> &data);
 	float dmin;
 	float dmax;
+	
+	std::vector<float> min_Gbest;
 public:
 	GA(int para_num,float dmin,float dmax,float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data));
 	void Setthread(ThreadPool &pool);

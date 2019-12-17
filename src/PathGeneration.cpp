@@ -41,8 +41,8 @@ float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 		((argv[3]+argv[1])<map_width)){
 		for(int i=0;i<size;i++){
 			float minx = INT16_MAX;
-			if((argv[2]-argv[0]<=data[i].X&&(data[i].X<=(argv[0]+argv[2])))
-				&&((argv[3]-argv[1]*0.3536)<data[i].Y&&(data[i].Y<(argv[3]+argv[1]*0.3536)))){//上下界
+			// if((argv[2]-argv[0]<=data[i].X&&(data[i].X<=(argv[0]+argv[2])))
+			// 	&&((argv[3]-argv[1]*0.3536)<data[i].Y&&(data[i].Y<(argv[3]+argv[1]*0.3536)))){//上下界
 				y = (data[i].Y-argv[3])/argv[1];
 				x = (data[i].X-argv[2])/argv[0];
 				x2 = x*x;
@@ -60,9 +60,7 @@ float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 					}
 				}
 				error+=minx;
-			}else {
-				return INT16_MAX;
-			}
+			// }else return INT16_MAX;
 		}
 	}else return INT16_MAX;
 	return error/size;

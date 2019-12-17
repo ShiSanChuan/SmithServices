@@ -72,8 +72,8 @@ auto draw_pic = [](RadioListen &radio,int msec){
 					
 				}
 			}
-			if(FactoryGA::getSolve(solve_name)->Accuracy<error.back().second){//生成的估计路线
-				error.push_back(std::make_pair(error.size(), FactoryGA::getSolve(solve_name)->Accuracy));
+			if(FactoryGA::getSolve(solve_name)->Accuracy<5){//生成的估计路线
+				error.push_back(std::make_pair(error.size(), FactoryGA::getSolve(solve_name)->min_Accuracy));
 				auto pathparam = FactoryGA::getSolve(solve_name)->GetOptimal();
 				printf("%f %f %f %f size: %ld error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
 					FactoryGA::getSolve(solve_name)->data.size(),error.back().second);
