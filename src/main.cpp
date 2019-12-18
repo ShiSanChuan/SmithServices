@@ -7,12 +7,13 @@
 #include "timer.h"
 #include "PathGeneration.h"
 #include "cvplot.h"
-#include "GA.h"
+#include "Solve.h"
 int flag=true;
 static unsigned char S=0x00;
 static unsigned char uav[16]={0};
 static unsigned char aim=0x00;
 static uint8_t Smith=0xff;
+float pi = 3.1415926;
 //Size
 float map_width = 40;
 float map_length = 100;
@@ -39,6 +40,8 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	auto &PSOfigure=cvplot::figure(PSO);
 	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
 	std::vector<std::pair<float, float> > Genpathdata;
+	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
+	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));
 	while(flag){
 		figure.clear();
 		{
@@ -68,15 +71,16 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}else{
 					auto data = radio.GetUAVPosion(AIM);
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
-					FactoryGA::getSolve(solve_name)->addPoint(data);//添加数据点
+
+					solve->addPoint(data);//添加数据点
 					
 				}
 			}
-			if(FactoryGA::getSolve(solve_name)->Accuracy<5){//生成的估计路线
-				error.push_back(std::make_pair(error.size(), FactoryGA::getSolve(solve_name)->min_Accuracy));
-				auto pathparam = FactoryGA::getSolve(solve_name)->GetOptimal();
-				printf("%f %f %f %f size: %ld error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
-					FactoryGA::getSolve(solve_name)->data.size(),error.back().second);
+			if(solve->Accuracy+1<INT16_MAX){//生成的估计路线
+				error.push_back(std::make_pair(error.size(), solve->Accuracy));
+				auto pathparam = solve->GetOptimal();
+				printf("%f %f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
+					error.back().second);
 				auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
 				Genpathdata.clear();
 				for(auto &p:pathdata){
@@ -173,7 +177,8 @@ int main(int argc, const char** argv)
     ThreadPool pool(30);//建立线程池
 	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
-	FactoryGA::addSolve(solve_name, 4, 5, map_length, CostPathGeneration)->Setthread(pool);//加入求解器
+	FactorySolve::addSolve(GaSolve, 4, 5, map_length, CostPathGeneration)->Setthread(pool);//加入求解器
+	FactorySolve::addSolve(CeresSolve)->Setthread(pool);
 
 #ifdef SIMULATE
 	Simulate::init(pool,Simulate_port);//模拟器 UAV
@@ -307,7 +312,7 @@ int main(int argc, const char** argv)
 #ifdef SIMULATE
 	Simulate::close();
 #endif
-	FactoryGA::close();
+	FactorySolve::close();
     return 0;
 }
 //todo 8字模型？+ GA + 点适配进去

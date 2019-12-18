@@ -1,14 +1,20 @@
 # SmithServices
 加油啊，航空史密斯
 
+<img src="doc/demo.png">
 
 ## environment test
 - Ubuntu 16.04
 - GNU 5.4.0
 - Opencv 3.3.1
 - yaml-cpp 0.6
+- ceres
 
 ## build
+~~需要google求解器~~
+```shell
+
+```
 ```shell
 mkdir build &  cd build
 cmake ..

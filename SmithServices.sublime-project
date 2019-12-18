@@ -157,18 +157,6 @@
 					"shell_cmd": "make -j4 yaml-cpp-read"
 				},
 				{
-					"name": "src/GA.o",
-					"shell_cmd": "make -j4 src/GA.o"
-				},
-				{
-					"name": "src/GA.i",
-					"shell_cmd": "make -j4 src/GA.i"
-				},
-				{
-					"name": "src/GA.s",
-					"shell_cmd": "make -j4 src/GA.s"
-				},
-				{
 					"name": "src/PathGeneration.o",
 					"shell_cmd": "make -j4 src/PathGeneration.o"
 				},
@@ -179,6 +167,18 @@
 				{
 					"name": "src/PathGeneration.s",
 					"shell_cmd": "make -j4 src/PathGeneration.s"
+				},
+				{
+					"name": "src/Solve.o",
+					"shell_cmd": "make -j4 src/Solve.o"
+				},
+				{
+					"name": "src/Solve.i",
+					"shell_cmd": "make -j4 src/Solve.i"
+				},
+				{
+					"name": "src/Solve.s",
+					"shell_cmd": "make -j4 src/Solve.s"
 				},
 				{
 					"name": "src/UAV.o",

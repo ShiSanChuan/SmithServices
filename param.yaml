@@ -70,8 +70,8 @@ UAV3:
   - *14
   - *15
 #Simulate AIM information
-a: &16 40
-b: &17 40
+a: &16 30
+b: &17 30
 c: &18 50
 d: &19 20
 Simulate_speed: &20 0.002
