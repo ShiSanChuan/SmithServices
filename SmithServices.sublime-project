@@ -21,6 +21,10 @@
 					"shell_cmd": "make -j4 RunService"
 				},
 				{
+					"name": "Ceres_test",
+					"shell_cmd": "make -j4 Ceres_test"
+				},
+				{
 					"name": "cvplotlib",
 					"shell_cmd": "make -j4 cvplotlib"
 				},
@@ -155,6 +159,42 @@
 				{
 					"name": "yaml-cpp-read",
 					"shell_cmd": "make -j4 yaml-cpp-read"
+				},
+				{
+					"name": "src/Ceres.o",
+					"shell_cmd": "make -j4 src/Ceres.o"
+				},
+				{
+					"name": "src/Ceres.i",
+					"shell_cmd": "make -j4 src/Ceres.i"
+				},
+				{
+					"name": "src/Ceres.s",
+					"shell_cmd": "make -j4 src/Ceres.s"
+				},
+				{
+					"name": "src/Circen.o",
+					"shell_cmd": "make -j4 src/Circen.o"
+				},
+				{
+					"name": "src/Circen.i",
+					"shell_cmd": "make -j4 src/Circen.i"
+				},
+				{
+					"name": "src/Circen.s",
+					"shell_cmd": "make -j4 src/Circen.s"
+				},
+				{
+					"name": "src/GA.o",
+					"shell_cmd": "make -j4 src/GA.o"
+				},
+				{
+					"name": "src/GA.i",
+					"shell_cmd": "make -j4 src/GA.i"
+				},
+				{
+					"name": "src/GA.s",
+					"shell_cmd": "make -j4 src/GA.s"
 				},
 				{
 					"name": "src/PathGeneration.o",

@@ -8,6 +8,16 @@ float distance(Value3 v1,Value3 v2){
 	float dz = v1.Z - v2.Z;
 	return sqrt(dx*dx+dy*dy+dz*dz);
 }
+enum Model
+{
+	dynamiccircle,
+	twocircle,
+	linewithcircle
+};
+
+/**
+ * 第一个模型
+ */
 std::vector<Value3> PathGeneration(float a,float b,float c, float d,float precision){
 	std::vector<Value3> path;
 	Value3 tmp;
@@ -29,17 +39,12 @@ std::vector<Value3> PathGeneration(float a,float b,float c, float d,float precis
 	}
 	return path;
 }
-
 float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
 	double error = 0.0;
 	float x = 0.0;
 	float y = 0.0;
 	float x2 = 0.0;
-	float tmp1;
-	float tmp2;
-	float tmp3;
-	float tmp4;
 	int size = data.size();//没有加锁，因此不能多变
 	if((0<(argv[2]-argv[0]))&&
 		((argv[0]+argv[2])<map_length)&&
@@ -52,30 +57,107 @@ float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 				minx = std::min(minx, distance(p,data[i] ) );
 			}
 			error+=minx;
-			// if((argv[2]-argv[0]<=data[i].X&&(data[i].X<=(argv[0]+argv[2])))){
-			// 	// &&((argv[3]-argv[1]*0.3536)<data[i].Y&&(data[i].Y<(argv[3]+argv[1]*0.3536)))){//上下界
-			// 	y = (data[i].Y-argv[3])/argv[1];
-			// 	x = (data[i].X-argv[2])/argv[0];
-			// 	x2 = x*x;
-			// 	tmp1 = std::sqrt(1+8*x2);
-			// 	tmp2 = (-2*x2-1 + tmp1)/2;
-			// 	if(tmp2>0){
-			// 		tmp3 = std::sqrt(tmp2);
-			// 		tmp4 = (tmp3-x)* argv[0]+argv[2];//还原误差
-			// 		if(minx>tmp4*tmp4){//最小误差
-			// 			minx = tmp4*tmp4;
-			// 		}
-			// 		tmp4 = (-tmp3-x)* argv[0]+argv[2];
-			// 		if(minx>tmp4*tmp4 ){
-			// 			minx = tmp4*tmp4;
-			// 		}
-			// 	}
-			// 	error+=minx;
-			// }else{
-				// y = (data[i].Y-argv[3]);
-				// x = (data[i].X-argv[2]);
-				// error += std::sqrt(x*x+y*y);
-			// }
+		}
+	}else return INT16_MAX;
+	return error/size;
+}
+
+//第二个模型
+std::vector<Value3> PathGeneration2(float x,float y,float r, float scale,float det,float precision){
+	std::vector<Value3> path;
+	Value3 tmp;
+	float x0 = x+r*std::cos(det);
+	float y0 = y+r*std::sin(det);
+	float high = 20;
+	for(float i=pi;i<3*pi;i+=precision){
+		tmp.X = x0+r*std::cos(i);
+		tmp.Y = y0+scale*r*std::sin(i);
+		tmp.Z = high;
+		path.push_back(tmp);
+	}
+	float x1 = x-r*std::cos(det);
+	float y1 = y-r*std::sin(det);
+	for(float i=0;i<2*pi;i+=precision){
+		tmp.X = x1+r*std::cos(i);
+		tmp.Y = y1+scale*r*std::sin(i);
+		tmp.Z = high;
+		path.push_back(tmp);
+	}
+	return path;
+}
+float  CostPathGeneration2(std::vector<float> &argv,std::vector<Value3> &data){
+	//argv[0]:x argv[1]:y argv[2]:r argv[3]:det
+	double error = 0.0;
+	float x = argv[0];
+	float y = argv[1];
+	float r = argv[2];
+	float scale = argv[3];
+	float det = argv[4];
+	int size = data.size();//没有加锁，因此不能多变
+	Value3 point1(x+r*std::cos(det),y+r*std::sin(det),20);
+	Value3 point2(x-r*std::cos(det),y-r*std::sin(det),20);
+	if((0<x)&&(x<map_length*2)&&(0<y)&&(y<map_length*2)&&(r<50)){
+		for(int i=0;i<size;i++){
+			error+=std::abs(std::min(distance(point1, data[i]),distance(point2,data[i]))-r);
+		}
+	}else return INT16_MAX;
+	printf("%lf\n",error);
+	return error/size;
+}
+//第三个模型
+std::vector<Value3> PathGeneration3(float x,float y,float r,float det,float precision){
+	std::vector<Value3> path;
+	Value3 tmp;
+	float high = 20;
+	float lineprecision = 2*r*(std::sin(precision/2));
+	for(int i=-r;i<r;i+=lineprecision){
+		tmp.X=x+i/2;
+		tmp.Y=y+i/2;
+		tmp.Z=high;
+		path.push_back(tmp);
+	}
+	float circle1x = x + std::sqrt(2)*r;
+	float circle1y = y ;
+	for(int i=-3*pi/4;i<3*pi/4;i+=precision){
+		tmp.X= circle1x+r*std::cos(i);
+		tmp.Y= circle1y+r*std::sin(i);
+		tmp.Z= high;
+		path.push_back(tmp);
+	}
+	for(int i=-r;i<r;i+=lineprecision){
+		tmp.X=x-i/2;
+		tmp.Y=y-i/2;
+		tmp.Z=high;
+		path.push_back(tmp);
+	}
+	float circle2x = x - std::sqrt(2)*r;
+	float circle2y = y ;
+	for(int i=-pi/4;i>-7*pi/4;i-=precision){
+		tmp.X= circle2x+r*std::cos(i);
+		tmp.Y= circle2y+r*std::sin(i);
+		tmp.Z= high;
+		path.push_back(tmp);
+	}
+	return path;
+}
+float  CostPathGeneration3(std::vector<float> &argv,std::vector<Value3> &data){
+	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
+	double error = 0.0;
+	float x = 0.0;
+	float y = 0.0;
+	float x2 = 0.0;
+	int size = data.size();//没有加锁，因此不能多变
+	if((0<(argv[2]-argv[0]))&&
+		((argv[0]+argv[2])<map_length)&&
+		(0<(argv[3]-argv[1]))&&
+		((argv[3]+argv[1])<map_width)){
+		for(int i=0;i<size;i++){
+			float minx = INT16_MAX;
+			auto tmp = PathGeneration3(argv[0],argv[1],argv[2],argv[3],0.5);
+			for(auto &p:tmp){
+				minx = std::min(minx, distance(p,data[i] ) );
+			}
+			error+=minx;
 		}
 	}else return INT16_MAX;
 	return error/size;

@@ -4,6 +4,94 @@
 		"selected_items":
 		[
 			[
+				"IN",
+				"INT16_MIN\tINT16_MIN"
+			],
+			[
+				"poi",
+				"point2\tValue3 point2"
+			],
+			[
+				"map",
+				"map_width"
+			],
+			[
+				"hy",
+				"hypot\tdouble hypot(double __x, double __y)"
+			],
+			[
+				"poin",
+				"point1"
+			],
+			[
+				"mi",
+				"minx\tfloat minx"
+			],
+			[
+				"G",
+				"Gbest\tstd::vector<float> Gbest"
+			],
+			[
+				"run",
+				"runCeres\tvoid runCeres(Ceres *c)"
+			],
+			[
+				"re",
+				"rebuild\tbool rebuild"
+			],
+			[
+				"dm",
+				"dmax\tfloat dmax"
+			],
+			[
+				"tmp",
+				"tmp4\tfloat tmp4"
+			],
+			[
+				"ba",
+				"back\treference back()"
+			],
+			[
+				"P",
+				"PathGeneration.h\t/home/shisanchuan/C++work/SmithServices/include"
+			],
+			[
+				"GA",
+				"GAsolve"
+			],
+			[
+				"pa",
+				"para_num"
+			],
+			[
+				"INT",
+				"INT16_MAX\tINT16_MAX"
+			],
+			[
+				"std",
+				"stdint.h\t/usr/lib/llvm-3.8/lib/clang/3.8.0/include"
+			],
+			[
+				"com",
+				"common.h"
+			],
+			[
+				"ar",
+				"argv\tconst char ** argv"
+			],
+			[
+				"get",
+				"getline\t__istream_type & basic_istream<char>::getline(char_type *__s, streamsize __n)"
+			],
+			[
+				"in",
+				"init"
+			],
+			[
+				"de",
+				"define"
+			],
+			[
 				"m",
 				"microseconds\tmicroseconds"
 			],
@@ -64,10 +152,6 @@
 				"UINT32_MAX\tUINT32_MAX"
 			],
 			[
-				"G",
-				"GetUAVPosion\tValue3 GetUAVPosion(Marker ID)"
-			],
-			[
 				"time",
 				"timer.h\t/home/shisanchuan/C++work/SmithServices/include"
 			],
@@ -86,10 +170,6 @@
 			[
 				"radi",
 				"radio_listen_thread.h\t/home/shisanchuan/C++work/SmithServices/include"
-			],
-			[
-				"de",
-				"device\tMarker device"
 			],
 			[
 				"radio",
@@ -134,14 +214,6 @@
 			[
 				"to_s",
 				"to_string\tstring to_string(double __val)"
-			],
-			[
-				"get",
-				"getTickCount\tint64 getTickCount()"
-			],
-			[
-				"ar",
-				"argc\tint argc"
 			],
 			[
 				"fast",
@@ -201,10 +273,6 @@
 			],
 			[
 				"Poin",
-				"Point\tPoint"
-			],
-			[
-				"poin",
 				"Point\tPoint"
 			],
 			[
@@ -446,74 +514,6 @@
 			[
 				"soc",
 				"asm/socket.h\t/usr/include/x86_64-linux-gnu"
-			],
-			[
-				"ros",
-				"rospubstring\tros Publisher string"
-			],
-			[
-				"ma",
-				"main\tmain()"
-			],
-			[
-				"re",
-				"result"
-			],
-			[
-				"_",
-				"_chrom_num"
-			],
-			[
-				"data",
-				"dataPoint\tstd::vector<std::pair<float, float> > dataPoint"
-			],
-			[
-				"Gr",
-				"Green\tconst cvplot::Color Green"
-			],
-			[
-				"add",
-				"addValue\tcvplot::Series & addValue(const std::vector<float> &values)"
-			],
-			[
-				"dis",
-				"dist"
-			],
-			[
-				"gen",
-				"gene1"
-			],
-			[
-				"a",
-				"assign\tvoid assign(size_type __n, const value_type &__val)"
-			],
-			[
-				"P",
-				"Popula"
-			],
-			[
-				"Po",
-				"Popula"
-			],
-			[
-				"CV8",
-				"CV_8UC1\tCV_8UC1"
-			],
-			[
-				"tran",
-				"transpose\tvoid transpose(InputArray src, OutputArray dst)"
-			],
-			[
-				"be",
-				"best"
-			],
-			[
-				"inde",
-				"indexi\tint indexi"
-			],
-			[
-				"Poi",
-				"Point2d\tPoint2d"
 			]
 		]
 	},
@@ -523,34 +523,108 @@
 			"file": "src/main.cpp",
 			"settings":
 			{
-				"buffer_size": 7031,
+				"buffer_size": 10436,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "include/common.h",
+			"file": "src/PathGeneration.cpp",
 			"settings":
 			{
-				"buffer_size": 997,
+				"buffer_size": 3645,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/UAVSimulate.cpp",
+			"file": "include/Solve.h",
 			"settings":
 			{
-				"buffer_size": 8558,
+				"buffer_size": 3488,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
+			"file": "include/PathGeneration.h",
 			"settings":
 			{
-				"buffer_size": 8455,
+				"buffer_size": 572,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unittest/Ceres_test.cpp",
+			"settings":
+			{
+				"buffer_size": 7097,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Solve.cpp",
+			"settings":
+			{
+				"buffer_size": 1301,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Circen.cpp",
+			"settings":
+			{
+				"buffer_size": 1854,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Ceres.cpp",
+			"settings":
+			{
+				"buffer_size": 1729,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/GA.cpp",
+			"settings":
+			{
+				"buffer_size": 3089,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "s\n",
+			"settings":
+			{
+				"buffer_size": 2,
+				"line_ending": "Unix",
+				"name": "Terminal (bash)",
+				"read_only": true,
+				"scratch": true
+			}
+		},
+		{
+			"file": "param.yaml",
+			"settings":
+			{
+				"buffer_size": 1251,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "README.md",
+			"settings":
+			{
+				"buffer_size": 710,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -559,6 +633,266 @@
 	"build_system": "SmithServices (Linux)",
 	"build_system_choices":
 	[
+		[
+			[
+				[
+					"SmithServices (Linux)",
+					""
+				],
+				[
+					"SmithServices (Linux)",
+					"clean"
+				],
+				[
+					"SmithServices (Linux)",
+					"rebuild_cache"
+				],
+				[
+					"SmithServices (Linux)",
+					"RunService"
+				],
+				[
+					"SmithServices (Linux)",
+					"Ceres_test"
+				],
+				[
+					"SmithServices (Linux)",
+					"cvplotlib"
+				],
+				[
+					"SmithServices (Linux)",
+					"RadioInterface"
+				],
+				[
+					"SmithServices (Linux)",
+					"yaml-cpp"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousSubmit"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousCoverage"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousTest"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousBuild"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousMemCheck"
+				],
+				[
+					"SmithServices (Linux)",
+					"Nightly"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyTest"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyUpdate"
+				],
+				[
+					"SmithServices (Linux)",
+					"Continuous"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyBuild"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyStart"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyMemoryCheck"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyMemCheck"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalStart"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousConfigure"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyCoverage"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalUpdate"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalConfigure"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalCoverage"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalBuild"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlyConfigure"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalTest"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalMemCheck"
+				],
+				[
+					"SmithServices (Linux)",
+					"Experimental"
+				],
+				[
+					"SmithServices (Linux)",
+					"NightlySubmit"
+				],
+				[
+					"SmithServices (Linux)",
+					"ExperimentalSubmit"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousStart"
+				],
+				[
+					"SmithServices (Linux)",
+					"ContinuousUpdate"
+				],
+				[
+					"SmithServices (Linux)",
+					"yaml-cpp-sandbox"
+				],
+				[
+					"SmithServices (Linux)",
+					"yaml-cpp-parse"
+				],
+				[
+					"SmithServices (Linux)",
+					"yaml-cpp-read"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Ceres.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Ceres.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Ceres.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/GA.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/PathGeneration.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/PathGeneration.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/PathGeneration.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Solve.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Solve.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/Solve.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAV.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAV.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAV.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAVSimulate.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAVSimulate.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/UAVSimulate.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/main.s"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.o"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.i"
+				],
+				[
+					"SmithServices (Linux)",
+					"src/radio_listen_thread.s"
+				]
+			],
+			[
+				"SmithServices (Linux)",
+				""
+			]
+		],
 		[
 			[
 				[
@@ -824,12 +1158,16 @@
 		"selected_items":
 		[
 			[
-				"bash",
-				"Terminal View: Open Bash Terminal"
-			],
-			[
 				"push",
 				"Git: Push"
+			],
+			[
+				"comm",
+				"Git: Commit"
+			],
+			[
+				"add all",
+				"Git: Add All"
 			],
 			[
 				"com",
@@ -840,12 +1178,24 @@
 				"Git: Add All"
 			],
 			[
-				"Package Control: ",
-				"Package Control: Upgrade Package"
-			],
-			[
 				"bas",
 				"Terminal View: Open Bash Terminal"
+			],
+			[
+				"bash",
+				"Terminal View: Open Bash Terminal"
+			],
+			[
+				"pus",
+				"Git: Push"
+			],
+			[
+				"add .",
+				"Git: Add..."
+			],
+			[
+				"Package Control: ",
+				"Package Control: Upgrade Package"
 			],
 			[
 				"git add",
@@ -854,10 +1204,6 @@
 			[
 				"git pull",
 				"Git: Pull"
-			],
-			[
-				"pus",
-				"Git: Push"
 			],
 			[
 				"add",
@@ -950,34 +1296,64 @@
 	[
 		"/home/shisanchuan/C++work/SmithServices",
 		"/home/shisanchuan/C++work/SmithServices/include",
-		"/home/shisanchuan/C++work/SmithServices/libHardWare",
-		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem",
-		"/home/shisanchuan/C++work/SmithServices/src"
+		"/home/shisanchuan/C++work/SmithServices/src",
+		"/home/shisanchuan/C++work/SmithServices/unittest"
 	],
 	"file_history":
 	[
-		"/home/shisanchuan/C++work/SmithServices/include/UAVSimulate.h",
-		"/home/shisanchuan/C++work/SmithServices/cvplotlib/figure.cc",
+		"/home/shisanchuan/C++work/SmithServices/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/include/thread_pool.h",
+		"/home/shisanchuan/C++work/cvplot/src/demo/demo.cc",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
+		"/home/shisanchuan/C++work/SmithServices/param.yaml",
+		"/home/shisanchuan/C++work/SmithServices/include/PathGeneration.h",
+		"/home/shisanchuan/C++work/SmithServices/include/Solve.h",
+		"/home/shisanchuan/C++work/SmithServices/unittest/CMakeLists.txt",
+		"/home/shisanchuan/C++work/SmithServices/unittest/Ceres_test.cpp",
+		"/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h",
+		"/tmp/mozilla_shisanchuan0/NumericDerivatives-1.cpp",
+		"/home/shisanchuan/C++work/SmithServices/include/common.h",
 		"/home/shisanchuan/C++work/SmithServices/src/PathGeneration.cpp",
+		"/home/shisanchuan/C++work/SmithServices/src/UAVSimulate.cpp",
+		"/home/shisanchuan/C++work/SmithServices/README.md",
 		"/home/shisanchuan/C++work/SmithServices/src/GA.cpp",
+		"/home/shisanchuan/C++work/SmithServices/yaml-cpp/include/yaml-cpp/node/impl.h",
+		"/home/shisanchuan/C++work/SmithServices/include/UAVSimulate.h",
+		"/home/shisanchuan/Realtimes_L4T_2821/readme.txt",
+		"/home/shisanchuan/Linux_for_Tegra/realtimes/rtso-9003-tx2i.conf",
+		"/home/shisanchuan/Linux_for_Tegra/flash.sh",
+		"/home/shisanchuan/Linux_for_Tegra/jetson-tx2.conf",
+		"/home/shisanchuan/Linux_for_Tegra/p2771-0000.conf.common",
+		"/home/shisanchuan/Linux_for_Tegra/realtimes/rtso-usb3-tx2i.conf.common",
+		"/home/shisanchuan/Linux_for_Tegra/realtimes/rtso-9003.conf.common",
+		"/home/shisanchuan/Linux_for_Tegra/jetson-tx2-as-4GB.conf",
+		"/home/shisanchuan/Linux_for_Tegra/jetson-tx2-4GB.conf",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/GA.h",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/PSO.cpp",
+		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA.cpp",
+		"/home/shisanchuan/C++work/SmithServices/test.yaml",
+		"/home/shisanchuan/C++work/SmithServices/yaml-cpp/include/yaml-cpp/node/node.h",
+		"/home/shisanchuan/C++work/SmithServices/include/ParamterReader.h",
+		"/home/shisanchuan/C++work/CAN_Bluetooth/CMakeLists.txt",
 		"/home/shisanchuan/C++work/SmithServices/src/radio_listen_thread.cpp",
+		"/home/shisanchuan/C++work/SmithServices/doc/socat-2.0.0-b9/EXAMPLES",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/include/internal.h",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/figure.cc",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/include/window.h",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/highgui.cc",
+		"/home/shisanchuan/C++work/SmithServices/cvplotlib/window.cc",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_interface.cpp",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_port.cpp",
 		"/home/shisanchuan/C++work/SmithServices/include/radio_listen_thread.h",
-		"/home/shisanchuan/C++work/SmithServices/CMakeLists.txt",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/radio_packet.cpp",
-		"/home/shisanchuan/C++work/cvplot/src/demo/demo.cc",
 		"/home/shisanchuan/C++work/SmithServices/include/timer.h",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/include/radio_packet.h",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/include/radio_interface.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
-		"/home/shisanchuan/C++work/SmithServices/include/PathGeneration.h",
 		"/home/shisanchuan/C++work/SmithServices/cvplotlib/color.cc",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/CMakeLists.txt",
 		"/home/shisanchuan/C++work/SmithServices/include/LinkList.h",
 		"/home/shisanchuan/C++work/SmithServices/src/LinkList.cpp",
 		"/home/shisanchuan/C++work/SmithServices/src/timer.cpp",
-		"/home/shisanchuan/C++work/SmithServices/include/thread_pool.h",
 		"/home/shisanchuan/C++work/SmithServices/src/UAV.cpp",
 		"/home/shisanchuan/桌面/challenge1/CMakeLists.txt",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/CMakeLists.txt",
@@ -985,7 +1361,6 @@
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/radioModem/src/serial_port.cpp",
 		"/home/shisanchuan/C++work/SmithServices/libHardWare/serialPort/include/serial_packet.h",
 		"/home/shisanchuan/C++work/SmithServices/src/main.cpp",
-		"/home/shisanchuan/C++work/SmithServices/include/common.h",
 		"/home/shisanchuan/C++work/SmithServices/include/uart.h",
 		"/home/shisanchuan/C++work/SmithServices/src/uart.cpp",
 		"/home/shisanchuan/C++work/SmithServices/src/Uart.cpp",
@@ -1053,41 +1428,11 @@
 		"/home/shisanchuan/catkin_ws/src/mpu6050_serial_to_imu/launch/demo.launch",
 		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA_TSP.cpp",
 		"/home/shisanchuan/C++work/bulid_tree.cpp",
-		"/home/shisanchuan/C++work/mlpacktest.cpp",
-		"/media/shisanchuan/C2B31627EFFD64AE/2018/mark.py",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/QGA.cpp",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/figure.h",
-		"/home/shisanchuan/.cache/.fr-1M0XA9/chapter10/main.m",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/CMakeLists.txt",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/demo.h",
-		"/home/shisanchuan/.config/sublime-text-3/Packages/User/C++.sublime-build",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/E_GA.cpp",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/build/src/point.txt",
-		"/home/shisanchuan/C++work/darknet/python/darknet.py",
-		"/media/shisanchuan/Ubuntu 16.0/predata.m",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/build/src/adjust_data.txt",
-		"/home/shisanchuan/matlab_work/2017E/predata.m",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/cvplotlib/figure.cc",
-		"/home/shisanchuan/GeneticAlgorithm/build/src/adjust_data.txt",
-		"/usr/include/opencv2/core/mat.hpp",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA.cpp",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA_BP.cpp",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/GA.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/CMakeLists.txt",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/README.md",
-		"/home/shisanchuan/.config/sublime-text-3/Packages/User/SublimeGDB.sublime-settings",
-		"/home/shisanchuan/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
-		"/usr/include/c++/5/bits/stl_algo.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/internal.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/GA.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/src/GAlib/CMakeLists.txt",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/includes/window.h",
-		"/home/shisanchuan/C++work/GeneticAlgorithm/GeneticAlgorithmByC++.sublime-project",
-		"/home/shisanchuan/C++work/GeneticAlgorithmByC++/src/cvplotlib/figure.cc"
+		"/home/shisanchuan/C++work/mlpacktest.cpp"
 	],
 	"find":
 	{
-		"height": 47.0
+		"height": 31.0
 	},
 	"find_in_files":
 	{
@@ -1102,6 +1447,48 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"point2",
+			"abs",
+			"map_width",
+			"runCeres",
+			"solve",
+			"Problem",
+			"AnalyticCostFunctor",
+			"GA",
+			"FactoryGA",
+			"min_Accuracy",
+			"mut",
+			"Gbest",
+			"}\n",
+			"fun",
+			"figure",
+			"name",
+			"static",
+			"Suav",
+			"system",
+			"2",
+			"double",
+			"float",
+			"ballon_point1",
+			"UAV1",
+			"end_point1",
+			"first_point1",
+			"start_point1",
+			"UAV_filed1",
+			"shell",
+			"mut",
+			"wmut",
+			"dataSend",
+			"tty",
+			"should equal",
+			"Incorrect depth_",
+			"Circle",
+			"Dots",
+			"drawText",
+			"setWindowTitle",
+			"drawFrame",
+			"title",
+			"drawText",
 			"printf",
 			"Smith",
 			"Dots",
@@ -1150,7 +1537,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1159,39 +1546,178 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7031,
+						"buffer_size": 10436,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1333,
-								1333
+								2965,
+								2965
 							]
 						],
 						"settings":
 						{
-							"function_name_status_row": 44,
-							"git_gutter_is_enabled": false,
-							"syntax": "Packages/C++/C++.sublime-syntax"
+							"function_name_status_row": 86,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 93.0,
+						"translation.y": 1386.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/PathGeneration.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3645,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1304,
+								1304
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 52,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 596.0,
+						"translation.y": 926.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "include/common.h",
+					"buffer": 2,
+					"file": "include/Solve.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 997,
+						"buffer_size": 3488,
 						"regions":
 						{
+						},
+						"selection":
+						[
+							[
+								2560,
+								2560
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 110,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2310.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "include/PathGeneration.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 572,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								572,
+								572
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 11,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 396.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "unittest/Ceres_test.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7097,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2960,
+								2960
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 105,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4950.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 5,
+					"file": "src/Solve.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1301,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
@@ -1202,83 +1728,226 @@
 						],
 						"settings":
 						{
-							"function_name_status_row": 16,
-							"git_gutter_is_enabled": false,
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 180.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 2,
-					"file": "src/UAVSimulate.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8558,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4087,
-								4087
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 106,
-							"git_gutter_is_enabled": false,
-							"open_with_edit": true,
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1941.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/home/shisanchuan/C++work/GeneticAlgorithm/src/demo.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8455,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1994,
-								1994
-							]
-						],
-						"settings":
-						{
-							"function_name_status_row": 69,
+							"function_name_status_row": 15,
 							"git_gutter_is_enabled": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 900.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/Circen.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1854,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								794,
+								794
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 35,
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 57.0,
+						"translation.y": 132.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Ceres.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1729,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1419,
+								1419
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 52,
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 660.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/GA.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3089,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1130,
+								1130
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 50,
+							"git_gutter_is_enabled": true,
+							"open_with_edit": true,
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 726.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"auto_complete_commit_on_tab": false,
+							"caret_style": "blink",
+							"color_scheme": "Packages/TerminalView/TerminalView.hidden-tmTheme",
+							"default_dir": "/home/shisanchuan/C++work/SmithServices/src",
+							"draw_centered": false,
+							"draw_indent_guides": false,
+							"draw_white_space": "none",
+							"function_name_status_row": 0,
+							"git_gutter_is_enabled": false,
+							"gutter": false,
+							"highlight_line": false,
+							"scroll_past_end": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"terminal_view": true,
+							"terminal_view_activate_args":
+							{
+								"cmd": "/bin/bash -l",
+								"cwd": "/home/shisanchuan/C++work/SmithServices/src",
+								"keep_open": false,
+								"syntax": null,
+								"title": "Terminal (bash)"
+							},
+							"terminal_view_last_cursor_pos":
+							[
+								0,
+								0
+							],
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "param.yaml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1251,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								859,
+								859
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 73,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/YAML/YAML.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1452.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "README.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 710,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								309,
+								309
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 27,
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 44.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
@@ -1286,7 +1955,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 31.0
 	},
 	"input":
 	{
@@ -1312,7 +1981,7 @@
 		"cols":
 		[
 			0.0,
-			0.347115459642,
+			0.734014261668,
 			1.0
 		],
 		"rows":
@@ -1324,11 +1993,15 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 174.0
+		"height": 176.0
 	},
 	"output.find_results":
 	{
 		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 134.0
 	},
 	"output.mdpopups":
 	{
@@ -1338,7 +2011,7 @@
 	"project": "SmithServices.sublime-project",
 	"replace":
 	{
-		"height": 54.0
+		"height": 58.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1372,7 +2045,7 @@
 		],
 		"width": 728.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},
@@ -1380,7 +2053,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 163.0,
+	"side_bar_width": 223.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

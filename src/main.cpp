@@ -42,6 +42,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	std::vector<std::pair<float, float> > Genpathdata;
 	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
 	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));
+	// Circen* solve = (Circen*)(FactorySolve::getSolve(CircenSolve));
 	while(flag){
 		figure.clear();
 		{
@@ -76,12 +77,13 @@ auto draw_pic = [](RadioListen &radio,int msec){
 					
 				}
 			}
-			if(solve->Accuracy+1<INT16_MAX){//生成的估计路线
+			if(solve->Accuracy+1<20){//生成的估计路线
 				error.push_back(std::make_pair(error.size(), solve->Accuracy));
 				auto pathparam = solve->GetOptimal();
 				printf("%f %f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
 					error.back().second);
-				auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
+				auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3],pathparam[4]);
+				// auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
 				Genpathdata.clear();
 				for(auto &p:pathdata){
 					// figure.series("Genpathdata").add(p.X,{p.Y,error.back().second } );
@@ -177,8 +179,12 @@ int main(int argc, const char** argv)
     ThreadPool pool(30);//建立线程池
 	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
+	//粒子群求解器
 	FactorySolve::addSolve(GaSolve, 4, 5, map_length, CostPathGeneration)->Setthread(pool);//加入求解器
+	//谷歌求解器
 	FactorySolve::addSolve(CeresSolve)->Setthread(pool);
+	//圆求解器
+	FactorySolve::addSolve(CircenSolve,0.001)->Setthread(pool);
 
 #ifdef SIMULATE
 	Simulate::init(pool,Simulate_port);//模拟器 UAV
@@ -219,6 +225,7 @@ int main(int argc, const char** argv)
 	while(1){
 		//未完成
 		std::this_thread::sleep_for(std::chrono::seconds(2));
+		printf("aim: %x UAV1: %x UAV2 %x UAV3 %x\n",aim,uav[UAV1],uav[UAV2],uav[UAV3] );
 	}
 	return 0;
 	while(1){

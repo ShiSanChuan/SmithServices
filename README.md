@@ -48,3 +48,32 @@ socat -d -d pty,raw,echo=0 pty,raw,echo=0
 ```shell
 ./bin/RunService param.yaml
 ```
+## 通讯协议
+- 使用16字节包为一个数据包
+- CMD:前4bit为状态，后4bit为标识 三架飞机分别为 
+
+```c
+typedef enum:unsigned char{
+	ROBOT_MODE_IN_INIT = 0x00,//初始化启动
+	ROBOT_MODE_IN_RETURN = 0x10,//返回
+	ROBOT_MODE_IN_MOVE = 0x20,//移动
+	ROBOT_MODE_IN_STAB = 0x40,//刺气球
+	ROBOT_MODE_IN_CATCH = 0x80,//抓气球	
+}Status;
+typedef enum:unsigned char
+{
+	Service = 0x00,
+	UAV1 = 0x01,
+	UAV2 = 0x02,
+	UAV3 = 0x04,
+	AIM = 0x08
+}Marker;
+```
+| |Head|CMD|Position|End|
+| --- | --- | --- | --- | --- |
+|ROBOT_MODE_IN_INIT | ff |00|XYZ| 0d |
+|ROBOT_MODE_IN_RETURN | ff |10|XYZ| 0d |
+|ROBOT_MODE_IN_MOVE | ff |20|XYZ| 0d |
+|ROBOT_MODE_IN_STAB | ff |40|XYZ| 0d |
+|ROBOT_MODE_IN_CATCH | ff |80|XYZ| 0d |
+

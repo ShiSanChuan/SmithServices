@@ -12,7 +12,8 @@
 enum Solve
 {	
 	GaSolve,
-	CeresSolve
+	CeresSolve,
+	CircenSolve
 };
 
 //特殊版
@@ -111,17 +112,38 @@ public:
 	std::vector<float> GetOptimal();
 };
 
+class Circen
+{
+public:
+	float Accuracy;
+	bool rebuild;
+	std::vector<Value3> data;
+	std::vector<float> Gbest;
+public:
+	Circen(float precision = 0.001);
+	~Circen();
+	void Setthread(ThreadPool &pool);
+	void addPoint(Value3 point);
+	std::vector<float> GetOptimal();
+private:
+	float precision;
+	double distance(Value3 v1, Value3 v2);
+	Value3 CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,float &mid);
+};
+
 class FactorySolve
 {
 private:
 	static GA* GASolver;
 	static Ceres* CeresSolver;
+	static Circen* CircenSolver;
 	FactorySolve();
 public:
 	static GA* addSolve(Solve solve,int para_num,
 		float dmin,float dmax,
 		float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data));
 	static Ceres* addSolve(Solve solve);
+	static Circen* addSolve(Solve solve,float precision);
 	static void* getSolve(Solve solve);
 	static void close();
 	~FactorySolve();
