@@ -97,7 +97,12 @@ namespace YAML {//解析用
 	    return true;
 	  }
 	};
-}
+};
 
+#define PNONE                 "\e[0m"
+#define PRED                  "\e[1;31m"
+#define PGREEN                "\e[1;32m"
+#define PYELLOW               "\e[1;33m"
+#define PWHITE                "\e[1;37m"
 
 #endif

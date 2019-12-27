@@ -12,7 +12,7 @@ static void run(RadioInterface *Radio,UAV *devices){
         if(Radio->dataRecv(recvPacket)==0){
             unsigned char CMD = recvPacket.getCMD();
             if((CMD&0xf0)>0x80){//命令
-
+                std::cerr<<"unknow command"<<std::endl;
             }else{//数据
                 unsigned char device =  CMD&0x0f;//设备
                 if(device>Device_size){
@@ -27,7 +27,7 @@ static void run(RadioInterface *Radio,UAV *devices){
                 }
             } 
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
     flag = false;
 }

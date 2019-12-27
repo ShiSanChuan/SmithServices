@@ -200,8 +200,8 @@ int RadioPort::Param_Set(int m_speed, int m_flow_ctrl, int m_databits, int m_sto
     //    options.c_lflag &= ~(ISIG | ICANON);
 
     //设置等待时间和最小接收字符
-    options.c_cc[VTIME] = 1; /* 读取一个字符等待1*(1/10)s */
-    options.c_cc[VMIN] = 1; /* 读取字符的最少个数为1 */
+    options.c_cc[VTIME] = 200; /* 读取一个字符等待1*(1/10)s */
+    options.c_cc[VMIN] = 0; /* 读取字符的最少个数为1 */
 
     tcflush(fd,TCIFLUSH);
 
@@ -219,7 +219,8 @@ int RadioPort::Recv(unsigned char *rcv_buf,int data_len)
 
     int ret;
     ret = read( fd, rcv_buf, data_len);
-    Flush();
+    if(ret>=data_len)
+        Flush();
     //断线重连
     if(ret<=0){
         //断线重连
