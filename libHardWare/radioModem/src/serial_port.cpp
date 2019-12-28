@@ -130,8 +130,8 @@ void serial_port::configure(baudrate_option baudrate, data_bits_option data_bits
  	 config.c_cflag |= (CLOCAL|CREAD);
 
  	 // set up control characters
-	 config.c_cc[VMIN]  = 1; // one input byte is enough to return from read()
-	 config.c_cc[VTIME] = 0; // inter character timer off
+	 config.c_cc[VMIN]  = 0; // one input byte is enough to return from read()
+	 config.c_cc[VTIME] = 200; // inter character timer off
 
 	 // communication speed
 	 if(cfsetispeed(&config,static_cast<unsigned int>(baudrate)) < 0 || cfsetospeed(&config, static_cast<unsigned int>(baudrate)) < 0)

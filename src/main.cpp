@@ -11,6 +11,7 @@
 int flag=true;
 static unsigned char S=0x00;
 static unsigned char uav[16]={0};
+static LinkList* iter[16]={0};
 static unsigned char aim=0x00;
 static uint8_t Smith=0xff;
 float pi = 3.1415926;
@@ -19,10 +20,12 @@ float map_width = 40;
 float map_length = 100;
 //UAV
 float UAV_filed = 11.54; //视野范围
+const float UAV_low_filed = 7; // 下面相机视野，没有文件读取
 float UAV_speed = 0.006; //速度
 int BALLON_num = 6;
+Value3 BALLON_Posion[6] = {0};
+int AIM_num = 1;
 float Simulate_speed = 0.002;
-std::string solve_name = "PSO";
 
 //绘图
 auto draw_pic = [](RadioListen &radio,int msec){
@@ -43,6 +46,12 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
 	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));
 	// Circen* solve = (Circen*)(FactorySolve::getSolve(CircenSolve));
+	std::string ARCH = "ARCH";
+	cvplot::setWindowTitle(ARCH,"curve");
+	cvplot::moveWindow(ARCH, 1200, 360);
+	cvplot::resizeWindow(ARCH, 360, 360);
+	auto &ARCHfigure=cvplot::figure(ARCH);
+	std::vector<std::pair<float, float> > archpath{std::make_pair(0, 0)};
 	while(flag){
 		figure.clear();
 		{
@@ -51,7 +60,6 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			std::vector<std::pair<float, float> > AIMdata;
 			std::vector<std::pair<float, float> > BALLONdata;
 			
-
 			std::vector<std::pair<float, float> > Actualpathdata;
 			std::vector<std::pair<float, float> > ActualAIMdata;
 			{//UAV数据
@@ -63,6 +71,13 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}	
 				UAVdata.push_back(std::pair<float, float>(map_length,map_width));
 
+			}
+			{//待刺破气球数据
+				// figure.series("filed").type(cvplot::Circle).color(cvplot::Yellow.alpha(192));
+				for(int i=0;i<BALLON_num;i++){
+					if(BALLON_Posion[i].Z!=0)//没掉
+						BALLONdata.push_back(std::pair<float,float>(BALLON_Posion[i].X,BALLON_Posion[i].Y));
+				}
 			}
 			//模拟数据
 			if((aim&0xf0) == ROBOT_MODE_IN_CATCH||(aim&0xf0) ==ROBOT_MODE_IN_RETURN){
@@ -108,6 +123,8 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			figure.series("ActualAIMdata").type(cvplot::Dots).set(ActualAIMdata).color(cvplot::Black);
 			//模拟器中实际AIM运动曲线
 			figure.series("Actualpathdata").set(Actualpathdata).color(cvplot::Gray);
+			//模拟器中气球位置
+			figure.series("BALLON").set(BALLONdata).type(cvplot::Dots).color(cvplot::Red);
 #endif
 			figure.series("Genpathdata").set(Genpathdata).color(cvplot::Red);
     
@@ -119,40 +136,60 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			PSOfigure.series("error").set(error).color(cvplot::Orange);
 			PSOfigure.border(30).show();
 		}
+		ARCHfigure.clear();
+		{
+			ARCHfigure.series("error").set(archpath).color(cvplot::Orange);
+			ARCHfigure.border(30).show();	
+		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 	}
 };
 //定时检测
 auto time_chech_UAV = [](RadioListen &radio,int msec){
+	uint SetlostNum[4]={0};
+	const static int LimitLost = 2;//2.5s
 	while(flag){
 		if(!radio.CheckUAV(UAV1)){
 			// std::cerr<<"UAV1 lost connect!"<<std::endl;
-			uav[UAV1] = ROBOT_MODE_IN_INIT;
+			if(SetlostNum[0]> LimitLost)
+				uav[UAV1] = ROBOT_MODE_IN_INIT;
+			else SetlostNum[0]++;
 		}else{
+			SetlostNum[0] = 0;
 			uav[UAV1] = radio.GetUAVCommend(UAV1)|UAV1;
 		}
 		if(!radio.CheckUAV(UAV2)){
 			// std::cerr<<"UAV2 lost connect!"<<std::endl;
-			uav[UAV2] = ROBOT_MODE_IN_INIT;
+			if(SetlostNum[1]> LimitLost)
+				uav[UAV2] = ROBOT_MODE_IN_INIT;
+			else SetlostNum[1]++;
 		}else{
+			SetlostNum[1] = 0;
 			uav[UAV2] = radio.GetUAVCommend(UAV2)|UAV2;
 		}
 		if(!radio.CheckUAV(UAV3)){
 			// std::cerr<<"UAV3 lost connect!"<<std::endl;
-			uav[UAV3] = ROBOT_MODE_IN_INIT;
+			if(SetlostNum[2]> LimitLost)
+				uav[UAV3] = ROBOT_MODE_IN_INIT;
+			else SetlostNum[2]++;
 		}else{
+			SetlostNum[2] = 0;
 			uav[UAV3] = radio.GetUAVCommend(UAV3)|UAV3;
 		}
 		if(!radio.CheckUAV(AIM)){
-			aim = ROBOT_MODE_IN_INIT|AIM;//丢失球
+			if(SetlostNum[3]> LimitLost)
+				aim = ROBOT_MODE_IN_INIT|AIM;//丢失球
+			else SetlostNum[3]++;
 			// Smith = 0xff;
 			for(int i=0x01;i<0x08;i=i<<1){
 				if(uav[i]&ROBOT_MODE_IN_RETURN ){//有返回代表抓到了气球
 					aim = ROBOT_MODE_IN_RETURN|AIM;//带着球返回了
 					Smith =Marker(i);
+					SetlostNum[3] = 0;
 				}
 			}
 		}else{
+			SetlostNum[3] = 0;
 			aim = ROBOT_MODE_IN_CATCH|AIM;//找到球
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(msec));
@@ -179,6 +216,12 @@ int main(int argc, const char** argv)
 	UAV_speed = config["UAV_speed"].as<float>(); //速度
 	BALLON_num = config["BALLON_num"].as<float>();
 	Simulate_speed = config["Simulate_speed"].as<float>();
+	BALLON_Posion[0] = config["ballon_point0"].as<Value3>();
+	BALLON_Posion[1] = config["ballon_point1"].as<Value3>();
+	BALLON_Posion[2] = config["ballon_point2"].as<Value3>();
+	BALLON_Posion[3] = config["ballon_point3"].as<Value3>();
+	BALLON_Posion[4] = config["ballon_point4"].as<Value3>();
+	BALLON_Posion[5] = config["ballon_point5"].as<Value3>();
     ThreadPool pool(30);//建立线程池
 	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
@@ -207,137 +250,203 @@ int main(int argc, const char** argv)
 #endif
 	pool.enqueue(draw_pic,radio_thread,50);//可视化
 	//启动飞机 到一个点
-	if(config["UAV1"]){
+	if(config["UAV1"]){//默认去刺球
 		printf("start UAV1\n");
 		UAV data(ROBOT_MODE_IN_INIT|UAV1);
-		data.Posion = config["first_point1"].as<Value3>();
+		data.Posion = config["start_point1"].as<Value3>();
 		radio_thread.SetUAVData(UAV1,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	if(config["UAV2"]){
+	if(config["UAV2"]){//默认去抓球
 		printf("start UAV2\n");
 		UAV data(ROBOT_MODE_IN_INIT|UAV2);
-		data.Posion = config["first_point2"].as<Value3>();
+		data.Posion = config["start_point2"].as<Value3>();
 		radio_thread.SetUAVData(UAV2,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	if(config["UAV3"]){
+	if(config["UAV3"]){//默认去刺球
 		printf("start UAV3\n");
 		UAV data(ROBOT_MODE_IN_INIT|UAV3);
-		data.Posion = config["first_point3"].as<Value3>();
+		data.Posion = config["start_point3"].as<Value3>();
 		radio_thread.SetUAVData(UAV3,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	time_t totalseconds = time(NULL);
 	struct tm *st = localtime(&totalseconds);
-	while(1){
-		//未完成
-		// UAV data(ROBOT_MODE_IN_INIT|UAV1);
-		// data.Posion = config["first_point2"].as<Value3>();
-		// radio_thread.SetUAVData(UAV1,data);
-		totalseconds = time(NULL);
-		tm *st = localtime(&totalseconds);
-		std::this_thread::sleep_for(std::chrono::seconds(2));
-		// std::this_thread::sleep_for(std::chrono::milliseconds(50));//发送
-		Value3 AIMdata = radio_thread.GetUAVPosion(AIM);
-		Value3 UAV1data = radio_thread.GetUAVPosion(UAV1);
-		Value3 UAV2data = radio_thread.GetUAVPosion(UAV2);
-		Value3 UAV3data = radio_thread.GetUAVPosion(UAV3);
-		printf("AIM: %02x UAV1: %02x UAV2: %02x UAV3: %02x\n",aim,uav[UAV1],uav[UAV2],uav[UAV3]);
-		// printf("%02d:%02d:%02d\t->\n",st->tm_hour,st->tm_min,st->tm_sec);
-		// printf((!aim&0xf0)?PRED:PGREEN  "aim: [%f,%f,%f]\n" PNONE,AIMdata.X,AIMdata.Y,AIMdata.Z);
-		// printf((!uav[UAV1])?PRED:PGREEN "UAV1:[%f,%f,%f]\n" PNONE,UAV1data.X,UAV1data.Y,UAV1data.Z);
-		// printf((!uav[UAV2])?PRED:PGREEN "UAV2:[%f,%f,%f]\n" PNONE,UAV2data.X,UAV2data.Y,UAV2data.Z);
-		// printf((!uav[UAV3])?PRED:PGREEN "UAV3:[%f,%f,%f]\n" PNONE,UAV3data.X,UAV3data.Y,UAV3data.Z);
-	}
-	return 0;
+	//服务端为多对一模式
+	//      / UAV1
+	//Smith - UAV2
+	//      \ UAV3
+	//三架飞机分别在自己的空域运动，地图大小为100x40，每块空域为33.33
+	//UAV离地高度为5m，视野范围为6m~10m，因此按弓字形搜索
+	// × × ×   ×  S   × x ×  x x x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  x   x   x
+	// ×   ×   ×  ×   ×   ×  ×   x   x
+	// S   × × x  x x ×   ×  S   x x x
+	// 
+	// 起始UAV做扎气球运动，上方视野里有目标，切换到追气球模式，无人机可以
+	// 接收到其他无人机的数据，但是收不到无人机之间相互发送的数据，若有一架追踪，
+	// 另外两架继续进行扎气球任务
+	//  - 若抓气球目标丢失，回到最近空域，若下降过程中视野里还有目标气球，继续上升进行抓取
+	//  - 若气球目标丢失，回到最近空域，下降过程中没有目标气球，回到最近的空域，三个无人机
+	//    继续做扎气球任务
+	// 
+	
+	iter[UAV1] = Patharch(config["start_point1"].as<Value3>(),3,0.8);
+	iter[UAV2] = Patharch(config["start_point2"].as<Value3>(),3,-0.8);
+	iter[UAV3] = Patharch(config["start_point3"].as<Value3>(),3,0.8);
 	while(1){
 		S = aim;
 		if(uav[UAV1]&0xf0)S = S | uav[UAV1];
 		if(uav[UAV2]&0xf0)S = S | uav[UAV2];
 		if(uav[UAV3]&0xf0)S = S | uav[UAV3];
-		if((S&0xf0)){
-			if((S&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
-				//抓气球 其中一个是找到了球 抓气球是要避免多架飞机冲突
-				float min_distance = UINT32_MAX;
-				float uav_distance ;
-				Marker index ;
-				Value3 aim_status = radio_thread.GetUAVPosion(AIM);
-				for(int i=0x01;i<0x80;i=i<<1){
-					if(S&i){
-						uav_distance = distance(radio_thread.GetUAVPosion(Marker(i)),aim_status);
-						min_distance = std::min(min_distance,uav_distance);
-						if(min_distance == uav_distance)index = Marker(i);
-					}
-				}
-				if((uav[index]&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
-					//nothing todo 当前飞机继续追  控制权在飞机上
-				}else {
-					//最近的飞机不是追的飞机,没有追的飞机需要闪避(飞机遇到自己的飞机)
-					UAV data;
-					data.situation = ROBOT_MODE_IN_MOVE;
-					data.Posion = radio_thread.GetUAVPosion(index);
-					data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
-					data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
-					radio_thread.SetUAVData(index,data);
-				}
-				for(int i=0x01;i<0x80;i++){
-					if((i!=index)&&(S&i)){//没有连接的不给任务
-						if((uav[i]&ROBOT_MODE_IN_CATCH) ==  ROBOT_MODE_IN_CATCH){//不能有两架同事追球
-							//做其他事
-							UAV data;
-							data.situation = ROBOT_MODE_IN_MOVE;
-							data.Posion = radio_thread.GetUAVPosion(Marker(i));
-							data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
-							data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
-							radio_thread.SetUAVData(index,data);							
-						}else if((uav[i]&ROBOT_MODE_IN_STAB) ==  ROBOT_MODE_IN_STAB){
-							//另外刺气球 正常 控制权在飞机上
-						}else if((uav[i]&ROBOT_MODE_IN_MOVE) ==  ROBOT_MODE_IN_MOVE){
-							//去移动
-						}else if((uav[i]&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
-							//当前UAV完成任务了 返回
+
+		totalseconds = time(NULL);
+		tm *st = localtime(&totalseconds);
+		printf("[%02d:%02d:%02d]-> S: %02x AIM: %02x UAV1: %02x UAV2: %02x UAV3: %02x\n",
+			st->tm_hour,st->tm_min,st->tm_sec,
+			S,aim,uav[UAV1],uav[UAV2],uav[UAV3]);
+		for(int i=0x01;i<0x08;i=i<<1){
+			Marker now_uav = Marker(i);
+			if(uav[now_uav]){//可通讯
+				if((S&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
+					if((uav[now_uav]&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
+						//是当前飞机追气球，继续追
+					}else{
+						//不是当前飞机追气球，与另外 分成两个空域刺气球。
+						UAV data((ROBOT_MODE_IN_MOVE)|now_uav);
+						if(iter[now_uav]){
+							data.Posion = iter[now_uav]->data;
+							iter[now_uav] = iter[now_uav]->next;
+							radio_thread.SetUAVData(now_uav,data);
 						}
 					}
-				}
-			}else if((S&ROBOT_MODE_IN_STAB) == ROBOT_MODE_IN_STAB){
-				//刺气球 是为了避免多架飞机冲突
-				for(int i=0x01;i<0x80;i=i<<1){
-					if((S&i)&&(uav[i]&ROBOT_MODE_IN_STAB)){
-						//仍然在刺气球
-						if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
-							//估计刺球 可能 或者去找球
-							Value3 aim_status = radio_thread.GetUAVPosion(AIM);//最后球丢失的地点
+				}else if((S&ROBOT_MODE_IN_STAB) == ROBOT_MODE_IN_STAB){//全都在刺球
+					if(AIM_num){//还有目标机没有抓取 分配空域
+						UAV data((ROBOT_MODE_IN_MOVE)|now_uav);
+						if(iter[now_uav]){
+							data.Posion = iter[now_uav]->data;
+							iter[now_uav] = iter[now_uav]->next;
+							radio_thread.SetUAVData(now_uav,data);
+						}				
+					}else{//没有目标后意味只有两架飞机,使用新的路线刺气球
 
-						}else {//任然刺气球哦
-
+					}
+				}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){
+					if(AIM_num||BALLON_num){//目标机或者气球没有刺
+						//继续刺球，因为抓球优先级比刺高
+						UAV data((ROBOT_MODE_IN_MOVE)|now_uav);
+						if(iter[now_uav]){
+							data.Posion = iter[now_uav]->data;
+							iter[now_uav] = iter[now_uav]->next;
+							radio_thread.SetUAVData(now_uav,data);
 						}
-					}else if((S&i)&&(uav[i]&ROBOT_MODE_IN_MOVE)){
-						//找气球可能点哦
-						if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
-							//直接找球
-						}else{
-							//去另外刺气球
-						}
-					}//飞机有返回的话是找到了球
+					}else{//任务都完成了
+
+					}
+				}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
+					//指导返回
 				}
-			}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){//移动 依据8字模型建立
-
-			}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){//返回
-
+				std::this_thread::sleep_for(std::chrono::milliseconds(15));
+			}else{
+				//丢弃通讯
 			}
-		}else {//初始化启动
-			//ROBOT_MODE_IN_INIT
 		}
+
+		// if((S&0xf0)){
+		// 	if((S&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
+		// 		//有目标飞机与气球，其中一架进行抓气球任务，另外两架进行刺气球不进行干预；
+		// 		//有两架进行抓气球，移动距离较远的飞机，刺气球的不进行干预
+		// 		//抓气球 其中一个是找到了球 抓气球是要避免多架飞机冲突
+		// 		float min_distance = UINT32_MAX;
+		// 		float uav_distance ;
+		// 		Marker index ;
+		// 		Value3 aim_status = radio_thread.GetUAVPosion(AIM);
+		// 		for(int i=0x01;i<0x80;i=i<<1){
+		// 			if(S&i){
+		// 				uav_distance = distance(radio_thread.GetUAVPosion(Marker(i)),aim_status);
+		// 				min_distance = std::min(min_distance,uav_distance);
+		// 				if(min_distance == uav_distance)index = Marker(i);
+		// 			}
+		// 		}
+		// 		if((uav[index]&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
+		// 			//nothing todo 当前飞机继续追  控制权在飞机上
+		// 		}else {
+		// 			//最近的飞机不是追的飞机,没有追的飞机需要闪避(飞机遇到自己的飞机)
+		// 			UAV data;
+		// 			data.situation = ROBOT_MODE_IN_MOVE;
+		// 			data.Posion = radio_thread.GetUAVPosion(index);
+		// 			data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
+		// 			data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
+		// 			radio_thread.SetUAVData(index,data);
+		// 		}
+		// 		for(int i=0x01;i<0x80;i++){
+		// 			if((i!=index)&&(S&i)){//没有连接的不给任务
+		// 				if((uav[i]&ROBOT_MODE_IN_CATCH) ==  ROBOT_MODE_IN_CATCH){//不能有两架同事追球
+		// 					//做其他事
+		// 					UAV data;
+		// 					data.situation = ROBOT_MODE_IN_MOVE;
+		// 					data.Posion = radio_thread.GetUAVPosion(Marker(i));
+		// 					data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
+		// 					data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
+		// 					radio_thread.SetUAVData(index,data);							
+		// 				}else if((uav[i]&ROBOT_MODE_IN_STAB) ==  ROBOT_MODE_IN_STAB){
+		// 					//另外刺气球 正常 控制权在飞机上
+		// 				}else if((uav[i]&ROBOT_MODE_IN_MOVE) ==  ROBOT_MODE_IN_MOVE){
+		// 					//去移动
+		// 				}else if((uav[i]&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
+		// 					//当前UAV完成任务了 返回
+		// 				}
+		// 			}
+		// 		}
+		// 	}else if((S&ROBOT_MODE_IN_STAB) == ROBOT_MODE_IN_STAB){
+		// 		//没有目标气球，但有刺气球任务，多数会出现
+		// 		//若有多架进行刺气球，选择中心的飞机不进行刺气球
+		// 		//刺气球 是为了避免多架飞机冲突
+		// 		for(int i=0x01;i<0x80;i=i<<1){
+		// 			if((S&i)&&(uav[i]&ROBOT_MODE_IN_STAB)){
+		// 				//仍然在刺气球
+		// 				if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
+		// 					//估计刺球 可能 或者去找球
+		// 					//若是丢球了，通过8字模型去找球
+		// 					//若是没找到球，等待那个找球的飞机完成
+
+		// 				}else {//任然刺气球哦
+		// 					//刺气球 正常 控制权在飞机上
+		// 				}
+		// 			}else if((S&i)&&(uav[i]&ROBOT_MODE_IN_MOVE)){
+		// 				//找气球可能点哦
+		// 				if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
+		// 					//若是丢球了，通过8字模型去找球
+		// 					//若是没找到球，等待那个找球的飞机完成
+							
+		// 				}else{
+		// 					//去另外刺气球 找其他可能有气球的
+		// 				}
+		// 			}//飞机有返回的话是找到了球
+		// 		}
+		// 	}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){//移动 依据8字模型建立
+		// 		//检查任务是否都完成
+		// 	}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){//返回
+		// 		//检查任务是否都完成
+		// 	}
+		// }else {//初始化启动 全部失联了
+		// 	//ROBOT_MODE_IN_INIT
+		// 	printf("RE INIT\n");
+		// }
+
 		if(aim&ROBOT_MODE_IN_CATCH){//记录球的位置  求解曲线 利用GA求解？
-
+			//加入数据
+		}
+		{//记录运行轨迹
 
 		}
-
-		//逻辑仲裁
-		//
-		//
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 #ifdef SIMULATE
 	Simulate::close();

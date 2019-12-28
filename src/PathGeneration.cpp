@@ -2,6 +2,7 @@
 #include "PathGeneration.h"
 #include "random"
 #include <stdint.h>
+#include <algorithm>
 float distance(Value3 v1,Value3 v2){
 	float dx = v1.X - v2.X;
 	float dy = v1.Y - v2.Y;
@@ -14,6 +15,44 @@ enum Model
 	twocircle,
 	linewithcircle
 };
+
+LinkList * Patharch(Value3 start,int curve,float precision){
+	LinkList * head = new LinkList(start);
+	LinkList * N = head;
+	LinkList * M;
+	float high = 5;
+	Value3 tmp;
+	tmp.X = start.X;
+	tmp.Y = start.Y;
+	tmp.Z = high;
+	std::vector<LinkList*> reverse_path;
+	for(int i = 0;i<=curve;){
+		if(tmp.Y  > map_width ){
+			precision = -std::abs(precision);
+			tmp.X +=  map_length/(curve*3);
+			tmp.Y = map_width;
+			i++;
+		}else if(tmp.Y < 0){
+			precision = std::abs(precision);
+			tmp.X +=  map_length/(curve*3);
+			tmp.Y = 0;
+			i++;
+		}
+		tmp.Y = tmp.Y + precision;
+		M = new LinkList(tmp);
+		reverse_path.push_back( new LinkList(tmp));//避免指针混乱
+		N->next = M;
+		N = N->next;
+	}
+	reverse(reverse_path.begin(),reverse_path.end());
+	for(auto &p:reverse_path){
+		N->next = p;
+		N = N->next;
+	}
+	N->next = head;
+
+	return head;
+}
 
 /**
  * 第一个模型

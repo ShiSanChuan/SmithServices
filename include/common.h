@@ -10,17 +10,6 @@
 #include "yaml-cpp/yaml.h"
 
 #define Device_size 9
-extern float pi ;
-
-//Size
-extern float map_width ;
-extern float map_length;
-//UAV
-extern float UAV_filed ;//视野范围
-extern float UAV_speed ; //速度
-extern float Simulate_speed ;
-extern int BALLON_num ;
-extern int flag;
 
 typedef enum:unsigned char{
 	ROBOT_MODE_IN_INIT = 0x00,//初始化启动
@@ -104,5 +93,19 @@ namespace YAML {//解析用
 #define PGREEN                "\e[1;32m"
 #define PYELLOW               "\e[1;33m"
 #define PWHITE                "\e[1;37m"
+
+extern float pi ;
+
+//Size
+extern float map_width ;
+extern float map_length;
+//UAV
+extern float UAV_filed ;//视野范围
+extern const float UAV_low_filed ;
+extern float UAV_speed ; //速度
+extern float Simulate_speed ;
+extern Value3 BALLON_Posion[6];
+extern int BALLON_num ;
+extern int flag;
 
 #endif
