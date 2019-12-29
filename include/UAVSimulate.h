@@ -16,7 +16,7 @@ public:
 	void init(ThreadPool &pool,RadioInterface *Radio,std::vector<Value3> path);//沿轨迹运动 目标机
 	void update();
 	void SetPosion(Value3 data);
-	void SetSituation(uint8_t situation);
+	bool SetSituation(uint8_t situation);
 };
 
 class Simulate

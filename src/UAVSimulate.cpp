@@ -21,12 +21,13 @@ static void Workrun(RadioInterface *Radio,UAVSimulate** Worker){
 			}else{
 				std::lock_guard<std::mutex> lock(rmut);
 				unsigned char device = CMD&0x0f;
-				if(Worker[device]){
+				if(device!=AIM&&Worker[device]){
 					data.X = recvPacket.getFloatInBuffer(2);
 					data.Y = recvPacket.getFloatInBuffer(6);
 					data.Z = recvPacket.getFloatInBuffer(10);
-					Worker[device]->SetPosion(data);//设定目标
-					Worker[device]->SetSituation(CMD);
+					if(Worker[device]->SetSituation(CMD))
+						Worker[device]->SetPosion(data);//设定目标
+					
 				}
 			}
 		}
@@ -42,11 +43,16 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 	backaim.X = 0;
 	backaim.Y = 0;
 	backaim.Z = 0;
+	bool return_flag = false;
 	while(flag){
-		if((Suav->uav.situation&0xf0)!=0xf0&&(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){
+		// std::lock_guard<std::mutex> lock(rmut);
+		if(return_flag)Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;
+		if((Suav->uav.situation&0xf0)!=0xf0&&
+			(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){
 			Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_MOVE;
 		}
-		if((Suav->uav.situation&0xf0)!=0xf0&&(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){//已初始化启动飞机 检测下方摄像头是否有待扎破气球 优先级较高
+		if((Suav->uav.situation&0xf0)!=0xf0&&
+		(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){//已初始化启动飞机 检测下方摄像头是否有待扎破气球 优先级较高
 		//
 			for(int i=0;i<BALLON_num;i++){
 				if(BALLON_Posion[i].Z == 0)continue;//已被击落气球
@@ -61,38 +67,54 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					float radio = (speed*50)/dis;
 					Suav->uav.Posion.X = Suav->uav.Posion.X + (BALLON_Posion[i].X - Suav->uav.Posion.X)*radio;
 					Suav->uav.Posion.Y = Suav->uav.Posion.Y + (BALLON_Posion[i].Y - Suav->uav.Posion.Y)*radio;
-					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (BALLON_Posion[i].Z - Suav->uav.Posion.Z)*radio*0.5;
+					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (BALLON_Posion[i].Z - Suav->uav.Posion.Z)*radio;
 					break;
 				}
 			}
 		}
-		if((Suav->uav.situation&0xf0)!=0xf0&&(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){//已初始化启动飞机 检查上方摄像头是否有球，优先级高
+		if((Suav->uav.situation&0xf0)!=0xf0&&
+		(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){//已初始化启动飞机 检查上方摄像头是否有球，优先级高
 			UAVSimulate* aim = Simulate::getUAV(AIM);
-			if((aim->uav.situation&0xf0)==ROBOT_MODE_IN_CATCH)break;//已被抓到
-			// if((aim->uav.situation&0xf0) ==ROBOT_MODE_IN_CATCH &&
-			//  (aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f) )break;//已经被抓到了
-			float dis = distance(aim->uav.Posion,Suav->uav.Posion);
-			// dis = std::sqrt(dis*dis - (aim->uav.Posion.Z - Suav->uav.Posion.Z)*(aim->uav.Posion.Z - Suav->uav.Posion.Z));
-			if(std::abs(aim->uav.Posion.X - Suav->uav.Posion.X)<0.2 &&std::abs(aim->uav.Posion.Y - Suav->uav.Posion.Y)<0.2  ){//快要抓到
-				// Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;//speed*50 最小单位
-				Suav->UAV_AIM = backaim;
-				Simulate::SendPack(ROBOT_MODE_IN_RETURN|AIM, aim->uav.Posion);
+			if((aim->uav.situation&ROBOT_MODE_IN_CATCH)==ROBOT_MODE_IN_CATCH)break;//已被抓到
+			bool other_incatch = false;
+			for(int i=0x01;i<0x08;i=i<<1){
+				if((Suav->uav.situation&0x0f)!=i){
+					auto other = Simulate::getUAV(Marker(i));
+					if((other->uav.situation&ROBOT_MODE_IN_CATCH)==ROBOT_MODE_IN_CATCH||
+						(other->uav.situation&ROBOT_MODE_IN_RETURN)==ROBOT_MODE_IN_RETURN){
+						other_incatch = true;
+						break;
+					}
+				}
 			}
-			else if(dis<std::abs(aim->uav.Posion.Z - Suav->uav.Posion.Z)*1.2){//视野里 field
-				UAVSimulate* aim = Simulate::getUAV(AIM);
-				float radio = (speed*50)/dis;
-				Suav->uav.Posion.X = Suav->uav.Posion.X + (aim->uav.Posion.X - Suav->uav.Posion.X)*radio;
-				Suav->uav.Posion.Y = Suav->uav.Posion.Y + (aim->uav.Posion.Y - Suav->uav.Posion.Y)*radio;
-				Suav->uav.Posion.Z = Suav->uav.Posion.Z + (aim->uav.Posion.Z - Suav->uav.Posion.Z)*radio*0.3;
-				// printf("%f %f %f\n",aim->uav.Posion.X,aim->uav.Posion.Y,aim->uav.Posion.Z);
-				//发送目标坐标系
-				Simulate::SendPack(ROBOT_MODE_IN_CATCH|AIM, aim->uav.Posion);
-				std::this_thread::sleep_for(std::chrono::milliseconds(10));
-				Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_CATCH;
+			if(!other_incatch){
+				// if((aim->uav.situation&0xf0) ==ROBOT_MODE_IN_CATCH &&
+				//  (aim->uav.situation&0x0f)!=(Suav->uav.situation&0x0f) )break;//已经被抓到了
+				float dis = distance(aim->uav.Posion,Suav->uav.Posion);
+				// dis = std::sqrt(dis*dis - (aim->uav.Posion.Z - Suav->uav.Posion.Z)*(aim->uav.Posion.Z - Suav->uav.Posion.Z));
+				if(std::abs(aim->uav.Posion.X - Suav->uav.Posion.X)<0.5 &&std::abs(aim->uav.Posion.Y - Suav->uav.Posion.Y)<0.5  ){//快要抓到
+					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;//speed*50 最小单位
+					Suav->UAV_AIM = backaim;
+					Simulate::SendPack(ROBOT_MODE_IN_RETURN|AIM, aim->uav.Posion);
+					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;
+					return_flag = true;
+				}
+				else if(dis<std::abs(aim->uav.Posion.Z - Suav->uav.Posion.Z)*1.2){//视野里 field
+					UAVSimulate* aim = Simulate::getUAV(AIM);
+					float radio = (speed*50)/dis;
+					Suav->uav.Posion.X = Suav->uav.Posion.X + (aim->uav.Posion.X - Suav->uav.Posion.X)*radio;
+					Suav->uav.Posion.Y = Suav->uav.Posion.Y + (aim->uav.Posion.Y - Suav->uav.Posion.Y)*radio;
+					Suav->uav.Posion.Z = Suav->uav.Posion.Z + (aim->uav.Posion.Z - Suav->uav.Posion.Z)*radio*0.3;
+					// printf("%f %f %f\n",aim->uav.Posion.X,aim->uav.Posion.Y,aim->uav.Posion.Z);
+					//发送目标坐标系
+					Simulate::SendPack(ROBOT_MODE_IN_CATCH|AIM, aim->uav.Posion);
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+					Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_CATCH;
+				}
 			}
 		}
 		uint8_t situation = Suav->uav.situation&0xf0;
-
+		if(return_flag) situation = ROBOT_MODE_IN_RETURN;
 		switch(situation){
 			case ROBOT_MODE_IN_INIT://初始化启动
 				std::this_thread::sleep_for(std::chrono::seconds(3));//飞机启动
@@ -105,9 +127,10 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 			case ROBOT_MODE_IN_RETURN:{//返回
 				float dis = distance(Suav->UAV_AIM,Suav->uav.Posion);
 				float radio = (speed*50)/dis;
-				Suav->uav.Posion.X = Suav->uav.Posion.X + (Suav->UAV_AIM.X - Suav->uav.Posion.X)*radio;
-				Suav->uav.Posion.Y = Suav->uav.Posion.Y + (Suav->UAV_AIM.Y - Suav->uav.Posion.Y)*radio;
-				Suav->uav.Posion.Z = Suav->uav.Posion.Z + (Suav->UAV_AIM.Z - Suav->uav.Posion.Z)*radio;
+				Suav->uav.Posion.X = Suav->uav.Posion.X + (backaim.X - Suav->uav.Posion.X)*radio;
+				Suav->uav.Posion.Y = Suav->uav.Posion.Y + (backaim.Y - Suav->uav.Posion.Y)*radio;
+				Suav->uav.Posion.Z = Suav->uav.Posion.Z + (backaim.Z - Suav->uav.Posion.Z)*radio*0.2;
+				Suav->uav.situation = (Suav->uav.situation&0x0f)|ROBOT_MODE_IN_RETURN;
 				break;
 			}
 			case ROBOT_MODE_IN_CATCH://抓气球
@@ -169,7 +192,7 @@ void runwithpath(UAVSimulate *Suav){
 			UAVSimulate* uav = Simulate::getUAV(Marker(i));
 			dis = distance(uav->uav.Posion,Suav->uav.Posion);
 			// dis = std::sqrt(dis*dis - (uav->uav.Posion.Z - Suav->uav.Posion.Z)*(uav->uav.Posion.Z - Suav->uav.Posion.Z));
-			if(std::abs(uav->uav.Posion.X - Suav->uav.Posion.X)<0.2 &&std::abs(uav->uav.Posion.Y - Suav->uav.Posion.Y)<0.2){
+			if(dis<speed*100){
 				Smith = Marker(uav->uav.situation&0x0f);
 				Suav->uav.situation = ROBOT_MODE_IN_CATCH|Smith;//speed*50 最小单位
 			}
@@ -191,6 +214,7 @@ void runwithpath(UAVSimulate *Suav){
 			case ROBOT_MODE_IN_CATCH://被抓到了	
 				UAVSimulate* uav = Simulate::getUAV(Smith);
 				Suav->uav.Posion= uav->uav.Posion;
+				Suav->uav.situation = ROBOT_MODE_IN_CATCH|Smith;
 				break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -263,8 +287,12 @@ void UAVSimulate::init(ThreadPool &pool,RadioInterface *Radio,std::vector<Value3
 void UAVSimulate::SetPosion(Value3 data){//设置目标位置
 	UAV_AIM = data;
 }
-void UAVSimulate::SetSituation(uint8_t situation){//屏蔽其他状态
-	if((situation&0xf0) == ROBOT_MODE_IN_INIT ||(situation&0xf0) == ROBOT_MODE_IN_MOVE )
-		uav.situation = situation; 
+bool UAVSimulate::SetSituation(uint8_t situation){//屏蔽其他状态
+	if((situation&ROBOT_MODE_IN_INIT) == ROBOT_MODE_IN_INIT ||
+		(situation&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){
+			uav.situation = situation; 
+			return true;
+	}
+	return false;
 }
 

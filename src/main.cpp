@@ -87,7 +87,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}else{
 					auto data = radio.GetUAVPosion(AIM);
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
-					solve->addPoint(data);//添加数据点
+					// solve->addPoint(data);//添加数据点
 				}
 			}
 			// if(solve->Accuracy+1<20){//生成的估计路线
@@ -335,7 +335,10 @@ int main(int argc, const char** argv)
 							radio_thread.SetUAVData(now_uav,data);
 						}				
 					}else{//没有目标后意味只有两架飞机,使用新的路线刺气球
-
+						//重新分配空域
+						if((uav[now_uav]&0xf0)!= ROBOT_MODE_IN_RETURN){
+							
+						}
 					}
 				}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){
 					if(AIM_num||BALLON_num){//目标机或者气球没有刺
@@ -347,7 +350,7 @@ int main(int argc, const char** argv)
 							radio_thread.SetUAVData(now_uav,data);
 						}
 					}else{//任务都完成了
-
+						//指导返回
 					}
 				}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
 					//指导返回
@@ -357,88 +360,6 @@ int main(int argc, const char** argv)
 				//丢弃通讯
 			}
 		}
-
-		// if((S&0xf0)){
-		// 	if((S&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
-		// 		//有目标飞机与气球，其中一架进行抓气球任务，另外两架进行刺气球不进行干预；
-		// 		//有两架进行抓气球，移动距离较远的飞机，刺气球的不进行干预
-		// 		//抓气球 其中一个是找到了球 抓气球是要避免多架飞机冲突
-		// 		float min_distance = UINT32_MAX;
-		// 		float uav_distance ;
-		// 		Marker index ;
-		// 		Value3 aim_status = radio_thread.GetUAVPosion(AIM);
-		// 		for(int i=0x01;i<0x80;i=i<<1){
-		// 			if(S&i){
-		// 				uav_distance = distance(radio_thread.GetUAVPosion(Marker(i)),aim_status);
-		// 				min_distance = std::min(min_distance,uav_distance);
-		// 				if(min_distance == uav_distance)index = Marker(i);
-		// 			}
-		// 		}
-		// 		if((uav[index]&ROBOT_MODE_IN_CATCH) == ROBOT_MODE_IN_CATCH){
-		// 			//nothing todo 当前飞机继续追  控制权在飞机上
-		// 		}else {
-		// 			//最近的飞机不是追的飞机,没有追的飞机需要闪避(飞机遇到自己的飞机)
-		// 			UAV data;
-		// 			data.situation = ROBOT_MODE_IN_MOVE;
-		// 			data.Posion = radio_thread.GetUAVPosion(index);
-		// 			data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
-		// 			data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
-		// 			radio_thread.SetUAVData(index,data);
-		// 		}
-		// 		for(int i=0x01;i<0x80;i++){
-		// 			if((i!=index)&&(S&i)){//没有连接的不给任务
-		// 				if((uav[i]&ROBOT_MODE_IN_CATCH) ==  ROBOT_MODE_IN_CATCH){//不能有两架同事追球
-		// 					//做其他事
-		// 					UAV data;
-		// 					data.situation = ROBOT_MODE_IN_MOVE;
-		// 					data.Posion = radio_thread.GetUAVPosion(Marker(i));
-		// 					data.Posion.X = data.Posion.X - (aim_status.X - data.Posion.X)/100;//偏离一点
-		// 					data.Posion.Y = data.Posion.Y - (aim_status.Y - data.Posion.Y)/100;
-		// 					radio_thread.SetUAVData(index,data);							
-		// 				}else if((uav[i]&ROBOT_MODE_IN_STAB) ==  ROBOT_MODE_IN_STAB){
-		// 					//另外刺气球 正常 控制权在飞机上
-		// 				}else if((uav[i]&ROBOT_MODE_IN_MOVE) ==  ROBOT_MODE_IN_MOVE){
-		// 					//去移动
-		// 				}else if((uav[i]&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
-		// 					//当前UAV完成任务了 返回
-		// 				}
-		// 			}
-		// 		}
-		// 	}else if((S&ROBOT_MODE_IN_STAB) == ROBOT_MODE_IN_STAB){
-		// 		//没有目标气球，但有刺气球任务，多数会出现
-		// 		//若有多架进行刺气球，选择中心的飞机不进行刺气球
-		// 		//刺气球 是为了避免多架飞机冲突
-		// 		for(int i=0x01;i<0x80;i=i<<1){
-		// 			if((S&i)&&(uav[i]&ROBOT_MODE_IN_STAB)){
-		// 				//仍然在刺气球
-		// 				if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
-		// 					//估计刺球 可能 或者去找球
-		// 					//若是丢球了，通过8字模型去找球
-		// 					//若是没找到球，等待那个找球的飞机完成
-
-		// 				}else {//任然刺气球哦
-		// 					//刺气球 正常 控制权在飞机上
-		// 				}
-		// 			}else if((S&i)&&(uav[i]&ROBOT_MODE_IN_MOVE)){
-		// 				//找气球可能点哦
-		// 				if((aim&ROBOT_MODE_IN_INIT)){//球丢了或者是没找到球
-		// 					//若是丢球了，通过8字模型去找球
-		// 					//若是没找到球，等待那个找球的飞机完成
-							
-		// 				}else{
-		// 					//去另外刺气球 找其他可能有气球的
-		// 				}
-		// 			}//飞机有返回的话是找到了球
-		// 		}
-		// 	}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){//移动 依据8字模型建立
-		// 		//检查任务是否都完成
-		// 	}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){//返回
-		// 		//检查任务是否都完成
-		// 	}
-		// }else {//初始化启动 全部失联了
-		// 	//ROBOT_MODE_IN_INIT
-		// 	printf("RE INIT\n");
-		// }
 
 		if(aim&ROBOT_MODE_IN_CATCH){//记录球的位置  求解曲线 利用GA求解？
 			//加入数据

@@ -1,7 +1,7 @@
 # SmithServices
 加油啊，航空史密斯
 
-<img src="doc/demo.png">
+<img src="doc/demo.gif">
 
 ## environment test
 - Ubuntu 16.04
