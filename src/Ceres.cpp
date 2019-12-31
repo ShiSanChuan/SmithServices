@@ -3,17 +3,25 @@
 #include <mutex>
 
 static std::mutex mut;
+
 void runCeres(Ceres *c){
+    double a_init = 10;
+    double b_init = 40;
+    double c_init = 16.5;
 	while(flag){
 		if(c->rebuild){
-			double param[4] = {20,20,map_length/2,map_width/2};
+			// double param[4] = {20,20,map_length/2,map_width/2};
+			double param[3] = {a_init,b_init,c_init};
 			ceres::Problem problem;
 			for(int i=0;i<c->data.size();i++){
 			    ceres::CostFunction *cost_function = new AnalyticCostFunctor(c->data[i].X, c->data[i].Y);
 			    problem.AddResidualBlock(cost_function, NULL, param);
 			}
 			ceres::Solver::Options options;
+			options.gradient_tolerance = 1e-32;
+			options.function_tolerance = 1e-16;
 			options.linear_solver_type = ceres::DENSE_QR;
+			options.max_num_iterations = 100;
 			ceres::Solver::Summary summary;
 			ceres::Solve(options, &problem, &summary);
 			c->Accuracy = summary.final_cost;
@@ -23,13 +31,8 @@ void runCeres(Ceres *c){
 				c->Gbest[0] = param[0];
 				c->Gbest[1] = param[1];
 				c->Gbest[2] = param[2];
-				c->Gbest[3] = param[3];
 			}
-			// for(int i=0;i<c->data.size();i++){
-			// 	printf("%f,%f,",c->data[i].X,c->data[i].Y );
-			// }
-			// printf("\n");
-			printf("->  %f %f %f %f\n",param[0],param[1],param[2],param[3] );
+			printf("->  %f %f %f\n",param[0],param[1],param[2]);
 			c->rebuild = false;
 		}else
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));	

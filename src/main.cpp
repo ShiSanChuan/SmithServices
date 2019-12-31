@@ -33,25 +33,20 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	std::string curve = "SmithService";
 	cvplot::setWindowTitle(curve,"curve");
 	cvplot::moveWindow(curve, 0, 0);
-	cvplot::resizeWindow(curve, 1200, 720);//*8 240*3
+	cvplot::resizeWindow(curve, 1200, 480);//*8 240*3 100x40
 	auto &figure=cvplot::figure(curve);
 
 	std::string PSO = "PSO";
 	cvplot::setWindowTitle(PSO,"accuracy");
 	cvplot::moveWindow(PSO, 1200, 0);
-	cvplot::resizeWindow(PSO, 360, 360);
+	cvplot::resizeWindow(PSO, 480, 480);
 	auto &PSOfigure=cvplot::figure(PSO);
 	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
 	std::vector<std::pair<float, float> > Genpathdata;
 	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
 	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));
 	// Circen* solve = (Circen*)(FactorySolve::getSolve(CircenSolve));
-	std::string ARCH = "ARCH";
-	cvplot::setWindowTitle(ARCH,"curve");
-	cvplot::moveWindow(ARCH, 1200, 360);
-	cvplot::resizeWindow(ARCH, 360, 360);
-	auto &ARCHfigure=cvplot::figure(ARCH);
-	std::vector<std::pair<float, float> > archpath{std::make_pair(0, 0)};
+
 	while(flag){
 		figure.clear();
 		{
@@ -87,23 +82,21 @@ auto draw_pic = [](RadioListen &radio,int msec){
 				}else{
 					auto data = radio.GetUAVPosion(AIM);
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
-					// solve->addPoint(data);//添加数据点
+					solve->addPoint(data);//添加数据点
 				}
 			}
-			// if(solve->Accuracy+1<20){//生成的估计路线
-			// 	error.push_back(std::make_pair(error.size(), solve->Accuracy));
-			// 	auto pathparam = solve->GetOptimal();
-			// 	printf("%f %f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],pathparam[3],
-			// 		error.back().second);
-			// 	auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3],pathparam[4]);
-			// 	// auto pathdata = PathGeneration(pathparam[0],pathparam[1],pathparam[2],pathparam[3]);
-			// 	Genpathdata.clear();
-			// 	for(auto &p:pathdata){
-			// 		// figure.series("Genpathdata").add(p.X,{p.Y,error.back().second } );
-			// 		Genpathdata.push_back(std::pair<float, float>(p.X,p.Y));
-			// 		// figure.series("Genpathdata").addValue(p.X,p.Y); 
-			// 	}
-			// }
+			if(solve->Accuracy+1<20){//生成的估计路线
+				error.push_back(std::make_pair(error.size(), solve->Accuracy));
+				auto pathparam = solve->GetOptimal();
+				// printf("%f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],error.back().second);
+				auto pathdata = PathGeneration3(pathparam[0],pathparam[1],pathparam[2]);
+				Genpathdata.clear();
+				for(auto &p:pathdata){
+					// figure.series("Genpathdata").add(p.X,{p.Y,error.back().second } );
+					Genpathdata.push_back(std::pair<float, float>(p.X,p.Y));
+					// figure.series("Genpathdata").addValue(p.X,p.Y); 
+				}
+			}
 #ifdef SIMULATE
 			{//模拟的寻找飞机数据
 				UAVSimulate *aim  = Simulate::getUAV(AIM);
@@ -135,11 +128,6 @@ auto draw_pic = [](RadioListen &radio,int msec){
 		{
 			PSOfigure.series("error").set(error).color(cvplot::Orange);
 			PSOfigure.border(30).show();
-		}
-		ARCHfigure.clear();
-		{
-			ARCHfigure.series("error").set(archpath).color(cvplot::Orange);
-			ARCHfigure.border(30).show();	
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 	}
@@ -226,7 +214,7 @@ int main(int argc, const char** argv)
 	RadioListen radio_thread(pool,Listen_port);//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
 	//粒子群求解器
-	FactorySolve::addSolve(GaSolve, 4, 5, map_length, CostPathGeneration)->Setthread(pool);//加入求解器
+	FactorySolve::addSolve(GaSolve, 3, 5, map_length, CostPathGeneration3)->Setthread(pool);//加入求解器
 	//谷歌求解器
 	FactorySolve::addSolve(CeresSolve)->Setthread(pool);
 	//圆求解器
@@ -242,10 +230,9 @@ int main(int argc, const char** argv)
 		Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio,config["start_point3"].as<Value3>());
 	if(config["Simulate_AIM"])
 		Simulate::addUAV(AIM)->init(pool, &Simulate::Radio,
-			PathGeneration(config["a"].as<float>(),
+			PathGeneration3(config["a"].as<float>(),
 							config["b"].as<float>(),
-							config["c"].as<float>(),
-							config["d"].as<float>()));
+							config["c"].as<float>()));
 
 #endif
 	pool.enqueue(draw_pic,radio_thread,50);//可视化
@@ -337,11 +324,11 @@ int main(int argc, const char** argv)
 					}else{//没有目标后意味只有两架飞机,使用新的路线刺气球
 						//重新分配空域
 						if((uav[now_uav]&0xf0)!= ROBOT_MODE_IN_RETURN){
-							
+	
 						}
 					}
 				}else if((S&ROBOT_MODE_IN_MOVE) == ROBOT_MODE_IN_MOVE){
-					if(AIM_num||BALLON_num){//目标机或者气球没有刺
+					if(AIM_num||[](){for(auto &p:BALLON_Posion)if(p.Z!=0)return true;return false;}){//目标机或者气球没有刺
 						//继续刺球，因为抓球优先级比刺高
 						UAV data((ROBOT_MODE_IN_MOVE)|now_uav);
 						if(iter[now_uav]){
@@ -351,6 +338,11 @@ int main(int argc, const char** argv)
 						}
 					}else{//任务都完成了
 						//指导返回
+						UAV data((ROBOT_MODE_IN_RETURN)|now_uav);
+						if(iter[now_uav]){
+							data.Posion = Value3(0,0,0);
+							radio_thread.SetUAVData(now_uav,data);
+						}
 					}
 				}else if((S&ROBOT_MODE_IN_RETURN) == ROBOT_MODE_IN_RETURN){
 					//指导返回
@@ -363,7 +355,11 @@ int main(int argc, const char** argv)
 
 		if(aim&ROBOT_MODE_IN_CATCH){//记录球的位置  求解曲线 利用GA求解？
 			//加入数据
+		}else if(aim&ROBOT_MODE_IN_RETURN){
+			AIM_num = 0;
+			//分配空域
 		}
+		
 		{//记录运行轨迹
 
 		}

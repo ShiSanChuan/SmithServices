@@ -1,4 +1,4 @@
-
+#include <Solve.h>
 #include "PathGeneration.h"
 #include "random"
 #include <stdint.h>
@@ -144,62 +144,74 @@ float  CostPathGeneration2(std::vector<float> &argv,std::vector<Value3> &data){
 	return error/size;
 }
 //第三个模型
-std::vector<Value3> PathGeneration3(float x,float y,float r,float det,float precision){
+std::vector<Value3> PathGeneration3(float r,float c,float d,float det,float precision){
 	std::vector<Value3> path;
 	Value3 tmp;
 	float high = 20;
-	float lineprecision = 2*r*(std::sin(precision/2));
-	for(int i=-r;i<r;i+=lineprecision){
-		tmp.X=x+i/2;
-		tmp.Y=y+i/2;
-		tmp.Z=high;
-		path.push_back(tmp);
-	}
-	float circle1x = x + std::sqrt(2)*r;
-	float circle1y = y ;
-	for(int i=-3*pi/4;i<3*pi/4;i+=precision){
-		tmp.X= circle1x+r*std::cos(i);
-		tmp.Y= circle1y+r*std::sin(i);
-		tmp.Z= high;
-		path.push_back(tmp);
-	}
-	for(int i=-r;i<r;i+=lineprecision){
-		tmp.X=x-i/2;
-		tmp.Y=y-i/2;
-		tmp.Z=high;
-		path.push_back(tmp);
-	}
-	float circle2x = x - std::sqrt(2)*r;
-	float circle2y = y ;
-	for(int i=-pi/4;i>-7*pi/4;i-=precision){
-		tmp.X= circle2x+r*std::cos(i);
-		tmp.Y= circle2y+r*std::sin(i);
-		tmp.Z= high;
-		path.push_back(tmp);
-	}
+	double speed = 2;
+	double sampleTime = 0.1;
+	double T = 2*r/speed;
+	double theta1;
+    for(double t = 0; t < T; t=t+0.1){
+    	tmp.X = -sqrt(2)/2*r + sqrt(2)/2*speed*t + c;
+    	tmp.Y = -sqrt(2)/2*r + sqrt(2)/2*speed*t + d;
+    	tmp.Z = high;
+    	path.push_back(tmp);
+    }
+    T = 3*pi*r/2/speed;
+    for(double t = 0; t < T; t=t+0.1){
+      theta1 = 3*pi/4 - speed*t/r;
+      tmp.X = sqrt(2)*r + r*cos(theta1) + c;
+      tmp.Y = r*sin(theta1) + d;
+      tmp.Z = high;
+      path.push_back(tmp);
+    }    
+    T = 2*r/speed;
+    for(double t = 0; t < T; t=t+0.1){
+      theta1 = 3*pi/4 - speed*t/r;
+      tmp.X = sqrt(2)/2*r - sqrt(2)/2*speed*t + c;
+      tmp.Y = -sqrt(2)/2*r + sqrt(2)/2*speed*t + d;
+      tmp.Z = high;
+      path.push_back(tmp);
+    }
+    T = 3*pi*r/2/speed;
+    for(double t = 0; t < T; t=t+0.1){
+      theta1 = pi/4 + speed*t/r;
+      tmp.X = -sqrt(2)*r + r*cos(theta1) + c;
+      tmp.Y = r*sin(theta1) + d;
+      tmp.Z = high;
+      path.push_back(tmp);
+    }    
 	return path;
 }
 float  CostPathGeneration3(std::vector<float> &argv,std::vector<Value3> &data){
 	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
-	double error = 0.0;
-	float x = 0.0;
-	float y = 0.0;
-	float x2 = 0.0;
-	int size = data.size();//没有加锁，因此不能多变
-	if((0<(argv[2]-argv[0]))&&
-		((argv[0]+argv[2])<map_length)&&
-		(0<(argv[3]-argv[1]))&&
-		((argv[3]+argv[1])<map_width)){
-		for(int i=0;i<size;i++){
-			float minx = INT16_MAX;
-			auto tmp = PathGeneration3(argv[0],argv[1],argv[2],argv[3],0.5);
-			for(auto &p:tmp){
-				minx = std::min(minx, distance(p,data[i] ) );
-			}
-			error+=minx;
-		}
-	}else return INT16_MAX;
-	return error/size;
+	// if(arg)
+	if((argv[0]>= argv[2])||(argv[0]>=map_width-argv[2]))
+		return INT16_MAX;
+	ceres::Problem problem;	
+	double param[3] = {0};
+	param[0] = argv[0];
+	param[1] = argv[1];
+	param[2] = argv[2];
+	for(int i=0;i<data.size();i++){
+	    ceres::CostFunction *cost_function = new AnalyticCostFunctor(data[i].X,data[i].Y);
+	    problem.AddResidualBlock(cost_function, NULL, param);
+	}
+	ceres::Solver::Options options;
+	options.gradient_tolerance = 1e-32;
+	options.function_tolerance = 1e-16;
+	options.linear_solver_type = ceres::DENSE_QR;
+	options.max_num_iterations = 100;
+	static std::string error = "error ceres";
+	options.IsValid(&error);
+	ceres::Solver::Summary summary;
+	ceres::Solve(options, &problem, &summary);
+	argv[0] = param[0];
+	argv[1] = param[1];
+	argv[2] = param[2];
+	if(summary.final_cost<0)return INT16_MAX;
+	return summary.final_cost;
 }
 
 std::vector<Value3> BallonGeneration(int width,int length){

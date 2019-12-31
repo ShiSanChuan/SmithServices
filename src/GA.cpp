@@ -61,7 +61,7 @@ void GA::addPoint(Value3 point){
 void GA::init(){
 	cv::RNG rng(time(NULL));
 	rng.fill(Population, cv::RNG::UNIFORM,dmin ,dmax );
-	rng.fill(speed, cv::RNG::UNIFORM,0 , 0.5);//速度不是
+	rng.fill(speed, cv::RNG::UNIFORM,0 , 1);//速度不是
 	Population.copyTo(Pbest);
 
 	for(int i=0,min=0;i<chrom_num;i++){

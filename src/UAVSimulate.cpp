@@ -53,7 +53,6 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 		}
 		if((Suav->uav.situation&0xf0)!=0xf0&&
 		(Suav->uav.situation&ROBOT_MODE_IN_RETURN)!=ROBOT_MODE_IN_RETURN){//已初始化启动飞机 检测下方摄像头是否有待扎破气球 优先级较高
-		//
 			for(int i=0;i<BALLON_num;i++){
 				if(BALLON_Posion[i].Z == 0)continue;//已被击落气球
 				float dis = distance(Suav->uav.Posion,BALLON_Posion[i]);
@@ -168,7 +167,6 @@ void runwithpath(UAVSimulate *Suav){
 	LinkList * N=nullptr;
 	LinkList * start=nullptr;
 	for(auto &p:Suav->path){
-
 		if(!head){
 			head = new LinkList(p);
 			N = head;
@@ -178,9 +176,7 @@ void runwithpath(UAVSimulate *Suav){
 			N = M;
 		}
 		if(m==0){
-			Suav->uav.Posion.X = p.X;
-			Suav->uav.Posion.Y = p.Y;
-			Suav->uav.Posion.Z = p.Z;
+			Suav->uav.Posion = p;
 			start = N;
 		}
 		m--;

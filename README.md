@@ -7,8 +7,8 @@
 - Ubuntu 16.04
 - GNU 5.4.0
 - Opencv 3.3.1
-- yaml-cpp 0.6
-- ceres
+- [yaml-cpp](https://github.com/jbeder/yaml-cpp) 0.6
+- [ceres](http://ceres-solver.org/installation.html)
 
 ## build
 ~~需要google求解器~~
@@ -46,7 +46,7 @@ socat -d -d pty,raw,echo=0 pty,raw,echo=0
 - ballon_point : 气球坐标
 
 ```shell
-./bin/RunService param.yaml
+./bin/RunService param.yaml 2>/dev/null
 ```
 ## 通讯协议
 - 使用16字节包为一个数据包
