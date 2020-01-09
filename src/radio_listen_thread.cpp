@@ -11,21 +11,18 @@ static void run(RadioInterface *Radio,UAV *devices){
     while(flag){
         if(Radio->dataRecv(recvPacket)==0){
             unsigned char CMD = recvPacket.getCMD();
-            if((CMD&0xf0)>0x80){//命令
-                std::cerr<<"unknow command"<<std::endl;
-            }else{//数据
-                unsigned char device =  CMD&0x0f;//设备
-                if(device>Device_size){
-                    std::cerr<<"error data?"<<std::endl;
-                }else{
-                    std::lock_guard<std::mutex> lock(rmut);
-                    devices[device].Posion.X =  recvPacket.getFloatInBuffer(2);
-                    devices[device].Posion.Y =  recvPacket.getFloatInBuffer(6);
-                    devices[device].Posion.Z =  recvPacket.getFloatInBuffer(10);
-                    devices[device].situation =  (CMD&0xf0);
-                    devices[device].update = true;                 
-                }
-            } 
+            unsigned char device =  recvPacket.getUncharInBuffer(1);
+            if(device>Device_size){
+                std::cerr<<"error data?"<<std::endl;
+            }else{
+                std::lock_guard<std::mutex> lock(rmut);
+                devices[device].Posion.X =  recvPacket.getFloatInBuffer(2);
+                devices[device].Posion.Y =  recvPacket.getFloatInBuffer(6);
+                devices[device].Posion.Z =  recvPacket.getFloatInBuffer(10);
+                devices[device].situation =  CMD;
+                devices[device].update = true;                 
+            }
+             
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -80,8 +77,10 @@ uint8_t RadioListen::GetUAVCommend(Marker ID){
 }
 void RadioListen::SetUAVData(Marker ID,UAV &data){
     std::lock_guard<std::mutex> lock(wmut);
+    assert(ID==data.ID);
     RadioPacket sendPacket;
     sendPacket.creatPacket(data.situation);
+    sendPacket.setUncharInBuffer(data.ID,1);
     sendPacket.setFloatInBuffer(data.Posion.X, 2);
     sendPacket.setFloatInBuffer(data.Posion.Y, 6);
     sendPacket.setFloatInBuffer(data.Posion.Z, 10);

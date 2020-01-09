@@ -52,7 +52,7 @@ socat -d -d pty,raw,echo=0 pty,raw,echo=0
 - 使用16字节包为一个数据包
 - CMD:前4bit为状态，后4bit为标识 三架飞机分别为 
 
-```c
+```
 typedef enum:unsigned char{
 	ROBOT_MODE_IN_INIT = 0x00,//初始化启动
 	ROBOT_MODE_IN_RETURN = 0x10,//返回
@@ -76,4 +76,11 @@ typedef enum:unsigned char
 |ROBOT_MODE_IN_MOVE | ff |20|XYZ| 0d |
 |ROBOT_MODE_IN_STAB | ff |40|XYZ| 0d |
 |ROBOT_MODE_IN_CATCH | ff |80|XYZ| 0d |
+
+## todo
+- ~~合并两个飞机代码~~
+- 添加TCP通信方式
+- 解决飞机启动飞行问题结合大疆wiki
+- 解决数传问题（或者通过遥控器控制）
+- 增加代码注释，方便修改问题
 

@@ -16,25 +16,90 @@ static void Workrun(RadioInterface *Radio,UAVSimulate** Worker){
 	while(flag){
 		if(Radio->dataRecv(recvPacket)==0){
 			unsigned char CMD = recvPacket.getCMD();
-			if((CMD&0xf0)>0x80){
-
-			}else{
-				std::lock_guard<std::mutex> lock(rmut);
-				unsigned char device = CMD&0x0f;
-				if(device!=AIM&&Worker[device]){
-					data.X = recvPacket.getFloatInBuffer(2);
-					data.Y = recvPacket.getFloatInBuffer(6);
-					data.Z = recvPacket.getFloatInBuffer(10);
-					if(Worker[device]->SetSituation(CMD))
-						Worker[device]->SetPosion(data);//设定目标
-					
-				}
+			std::lock_guard<std::mutex> lock(rmut);
+			unsigned char device = recvPacket.getUncharInBuffer(1);
+			if(device!=AIM&&Worker[device]){
+				data.X = recvPacket.getFloatInBuffer(2);
+				data.Y = recvPacket.getFloatInBuffer(6);
+				data.Z = recvPacket.getFloatInBuffer(10);
+				if(Worker[device]->SetSituation(CMD))
+					Worker[device]->SetPosion(data);//设定目标
 			}
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	flag = false;
 }
+
+void run2(RadioInterface *Radio,UAVSimulate *Suav){
+	float speed = UAV_speed;//飞行速度 km/h -> 1/360 m/ms 
+	float field = UAV_filed;	 // 可以看见球的范围
+	Value3 backaim;
+	//返回点
+	backaim.X = 0;
+	backaim.Y = 0;
+	backaim.Z = 0;
+	bool return_flag = false;
+	uint8_t situation=0xff;
+	while(flag){
+		if(situation!=Suav->uav.situation){//改变状态
+			Suav->uav.situation = situation;
+			switch(situation){
+				case ROBOT_MODE_IN_INIT:{//初始化
+					break;
+				}
+				case ROBOT_MODE_IN_TAKEOFF:{//自动起飞
+					break;
+				}
+				case ROBOT_MODE_IN_MOVETO:{//移动到一个点
+					break;
+				}
+				case ROBOT_MODE_IN_LINE:{//线型移动
+					break;
+				}
+				case ROBOT_MODE_IN_CATCH:{//抓取气球
+					break;
+				}
+				case ROBOT_MODE_IN_STAB:{//刺气球
+					break;
+				}
+				case ROBOT_MODE_IN_RETURN:{//返回
+					break;
+				}
+				case ROBOT_MODE_IN_EMPTY:{//空任务
+					break;
+				}
+			}
+		}
+		switch(situation){//动作
+			case ROBOT_MODE_IN_INIT:{//初始化
+				break;
+			}
+			case ROBOT_MODE_IN_TAKEOFF:{//自动起飞
+				break;
+			}
+			case ROBOT_MODE_IN_MOVETO:{//移动到一个点
+				break;
+			}
+			case ROBOT_MODE_IN_LINE:{//线型移动
+				break;
+			}
+			case ROBOT_MODE_IN_CATCH:{//抓取气球
+				break;
+			}
+			case ROBOT_MODE_IN_STAB:{//刺气球
+				break;
+			}
+			case ROBOT_MODE_IN_RETURN:{//返回
+				break;
+			}
+			case ROBOT_MODE_IN_EMPTY:{//空任务
+				break;
+			}
+		}
+	}
+}
+
 void run(RadioInterface *Radio,UAVSimulate *Suav){
 	float speed = UAV_speed;//飞行速度 km/h -> 1/360 m/ms 
 	float field = UAV_filed;	 // 可以看见球的范围
@@ -162,7 +227,7 @@ void runwithpath(UAVSimulate *Suav){
 	uint8_t situation;
 	int64_t m = rand()%(Suav->path.size());
 	Marker Smith;
-	Suav->uav.situation = ROBOT_MODE_IN_MOVE;
+	Suav->uav.situation = ROBOT_MODE_IN_MOVETO;
 	LinkList * head=nullptr;
 	LinkList * N=nullptr;
 	LinkList * start=nullptr;
@@ -183,14 +248,14 @@ void runwithpath(UAVSimulate *Suav){
 	}
 	N->next = head;//环形链表
 	while(flag){
-		if((Suav->uav.situation&0xf0) == ROBOT_MODE_IN_MOVE)
-		for(int i=0x01;i<0x08;i=i<<1){
+		if((Suav->uav.situation) == ROBOT_MODE_IN_MOVETO)
+		for(int i=0;i<UAV_size;i++){
 			UAVSimulate* uav = Simulate::getUAV(Marker(i));
 			dis = distance(uav->uav.Posion,Suav->uav.Posion);
 			// dis = std::sqrt(dis*dis - (uav->uav.Posion.Z - Suav->uav.Posion.Z)*(uav->uav.Posion.Z - Suav->uav.Posion.Z));
 			if(dis<speed*100){
-				Smith = Marker(uav->uav.situation&0x0f);
-				Suav->uav.situation = ROBOT_MODE_IN_CATCH|Smith;//speed*50 最小单位
+				Smith = Marker(uav->uav.ID);
+				Suav->uav.situation = ROBOT_MODE_IN_CATCH;//speed*50 最小单位
 			}
 		}
 		situation = Suav->uav.situation&0xf0;

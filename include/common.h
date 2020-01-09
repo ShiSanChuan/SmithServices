@@ -9,23 +9,26 @@
 #include <stdint.h>
 #include "yaml-cpp/yaml.h"
 
-#define Device_size 9
-
+#define Device_size 5
+#define UAV_size 3
 typedef enum:unsigned char{
-	ROBOT_MODE_IN_INIT = 0x00,//初始化启动
-	ROBOT_MODE_IN_RETURN = 0x10,//返回
-	ROBOT_MODE_IN_MOVE = 0x20,//移动
-	ROBOT_MODE_IN_STAB = 0x40,//刺气球
-	ROBOT_MODE_IN_CATCH = 0x80,//抓气球	
+	ROBOT_MODE_IN_INIT    = 0x00,//初始化
+	ROBOT_MODE_IN_TAKEOFF = 0x01,//自动起飞
+	ROBOT_MODE_IN_MOVETO  = 0x02,//飞到一个点
+	ROBOT_MODE_IN_LINE    = 0x03,//一条线飞
+	ROBOT_MODE_IN_CATCH   = 0x04,//抓气球
+	ROBOT_MODE_IN_STAB    = 0x05,//刺气球
+	ROBOT_MODE_IN_RETURN  = 0x06,//返回
+	ROBOT_MODE_IN_EMPTY   = 0xff,//空状态	
 }Status;
 
 typedef enum:unsigned char
 {
-	Service = 0x00,
-	UAV1 = 0x01,
-	UAV2 = 0x02,
-	UAV3 = 0x04,
-	AIM = 0x08
+	UAV1 = 0x00,
+	UAV2 = 0x01,
+	UAV3 = 0x02,
+	AIM = 0x03,
+	Service = 0x04
 }Marker;
 
 typedef struct Value3
@@ -42,7 +45,7 @@ typedef struct Value3
 
 typedef struct UAV
 {
-	UAV(uint8_t situation=0){
+	UAV(uint8_t situation=0,uint8_t ID=0){
 		this->situation = situation;
 		this->update = 0;
 		this->Posion.X = 0;
@@ -51,6 +54,7 @@ typedef struct UAV
 	}
 	Value3 Posion;
 	uint8_t situation;
+	uint8_t ID;
 	bool update;
 }UAV;
 
