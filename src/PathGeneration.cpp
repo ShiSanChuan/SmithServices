@@ -15,32 +15,19 @@ enum Model
 	twocircle,
 	linewithcircle
 };
-
-LinkList * Patharch(Value3 start,int curve,float precision){
+LinkList *Pathline(Value3 start,int line_size,float precision){
 	LinkList * head = new LinkList(start);
 	LinkList * N = head;
 	LinkList * M;
-	float high = 5;
 	Value3 tmp;
 	tmp.X = start.X;
 	tmp.Y = start.Y;
-	tmp.Z = high;
+	tmp.Z = start.Z;
 	std::vector<LinkList*> reverse_path;
-	for(int i = 0;i<=curve;){
-		if(tmp.Y  > map_width ){
-			precision = -std::abs(precision);
-			tmp.X +=  map_length/(curve*3);
-			tmp.Y = map_width;
-			i++;
-		}else if(tmp.Y < 0){
-			precision = std::abs(precision);
-			tmp.X +=  map_length/(curve*3);
-			tmp.Y = 0;
-			i++;
-		}
-		tmp.Y = tmp.Y + precision;
+	for(float i=0;i<line_size;i+=precision){
+		tmp.Y +=precision;
 		M = new LinkList(tmp);
-		reverse_path.push_back( new LinkList(tmp));//避免指针混乱
+		reverse_path.push_back( new LinkList(tmp));
 		N->next = M;
 		N = N->next;
 	}
@@ -50,8 +37,58 @@ LinkList * Patharch(Value3 start,int curve,float precision){
 		N = N->next;
 	}
 	N->next = head;
-
 	return head;
+}
+LinkList * Patharch(Value3 start,int curve,float precision){
+    LinkList * head = new LinkList(start);
+    LinkList * N = head;
+    LinkList * M;
+    float high = 5;
+    Value3 tmp;
+    tmp.X = start.X;
+    tmp.Y = start.Y;
+    tmp.Z = high;
+    std::vector<LinkList*> reverse_path;
+    for(int i = 0;i<=curve;){
+        if(tmp.Y  > map_width){
+            i++;
+            if(i>curve)break;
+            precision = -std::abs(precision);
+            tmp.Y = map_width;
+            for(int j=0;j<10;j++){
+                tmp.X +=  map_length/(curve*3*10);
+                M = new LinkList(tmp);
+                reverse_path.push_back( new LinkList(tmp));//避免指针混乱
+                N->next = M;
+                N = N->next;
+            }
+            
+        }else if(tmp.Y < 0){
+            i++;
+            if(i>curve)break;
+            precision = std::abs(precision);
+            tmp.Y = 0;
+            for(int j=0;j<10;j++){
+                tmp.X +=  map_length/(curve*3*10);
+                M = new LinkList(tmp);
+                reverse_path.push_back( new LinkList(tmp));//避免指针混乱
+                N->next = M;
+                N = N->next;
+            }
+        }
+        tmp.Y = tmp.Y + precision;
+        M = new LinkList(tmp);
+        reverse_path.push_back( new LinkList(tmp));//避免指针混乱
+        N->next = M;
+        N = N->next;
+    }
+    reverse(reverse_path.begin(),reverse_path.end());
+    for(auto &p:reverse_path){
+        N->next = p;
+        N = N->next;
+    }
+    N->next = head;
+    return head;
 }
 
 /**

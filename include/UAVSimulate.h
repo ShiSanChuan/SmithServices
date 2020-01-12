@@ -9,7 +9,6 @@ class UAVSimulate
 {
 public:
 	UAV uav;
-	Value3 UAV_AIM;
 	std::vector<Value3> path;
 public:
 	void init(ThreadPool &pool,RadioInterface *Radio,Value3 start=Value3(0,0,0));//追寻机 按照命令和查找动作运动
@@ -30,7 +29,7 @@ public:
 	static void init(ThreadPool &pool,std::string port="/dev/ttyUSB1");
 	static UAVSimulate * addUAV(Marker ID);
 	static UAVSimulate* getUAV(Marker ID);
-	static void SendPack(uint8_t CMD,Value3 data);
+	static void SendPack(uint8_t CMD,uint8_t ID,Value3 data);
 	static void close();
 	~Simulate();
 	

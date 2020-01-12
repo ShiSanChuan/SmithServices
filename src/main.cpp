@@ -59,7 +59,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 			std::vector<std::pair<float, float> > ActualAIMdata;
 			{//UAV数据
 			    figure.series("filed").type(cvplot::Circle).color(cvplot::Purple.alpha(192));
-				for(int i=0x01;i<0x08;i=i<<1){
+				for(int i=0;i<UAV_size;i++){
 					auto data = radio.GetUAVPosion(Marker(i));
 					UAVdata.push_back(std::pair<float,float>(data.X,data.Y));
 					figure.series("filed").add(data.X,{data.Y,UAV_filed*4 } );
@@ -74,8 +74,8 @@ auto draw_pic = [](RadioListen &radio,int msec){
 						BALLONdata.push_back(std::pair<float,float>(BALLON_Posion[i].X,BALLON_Posion[i].Y));
 				}
 			}
-			//模拟数据
-			if((aim&0xf0) == ROBOT_MODE_IN_CATCH||(aim&0xf0) ==ROBOT_MODE_IN_RETURN){
+			//模拟抓到数据
+			if((aim) == ROBOT_MODE_IN_CATCH||(aim) ==ROBOT_MODE_IN_RETURN){
 				if(Smith!=0xff){
 					auto data = radio.GetUAVPosion(Marker(Smith));
 					AIMdata.push_back(std::pair<float, float>(data.X,data.Y));
@@ -135,50 +135,50 @@ auto draw_pic = [](RadioListen &radio,int msec){
 //定时检测
 auto time_chech_UAV = [](RadioListen &radio,int msec){
 	uint SetlostNum[4]={0};
-	const static int LimitLost = 2;//2.5s
+	const static int LimitLost = 100;//2.5s
 	while(flag){
 		if(!radio.CheckUAV(UAV1)){
 			// std::cerr<<"UAV1 lost connect!"<<std::endl;
 			if(SetlostNum[0]> LimitLost)
-				uav[UAV1] = ROBOT_MODE_IN_INIT;
+				uav[UAV1] = ROBOT_MODE_IN_LOST;
 			else SetlostNum[0]++;
 		}else{
 			SetlostNum[0] = 0;
-			uav[UAV1] = radio.GetUAVCommend(UAV1)|UAV1;
+			uav[UAV1] = radio.GetUAVCommend(UAV1);
 		}
 		if(!radio.CheckUAV(UAV2)){
 			// std::cerr<<"UAV2 lost connect!"<<std::endl;
 			if(SetlostNum[1]> LimitLost)
-				uav[UAV2] = ROBOT_MODE_IN_INIT;
+				uav[UAV2] = ROBOT_MODE_IN_LOST;
 			else SetlostNum[1]++;
 		}else{
 			SetlostNum[1] = 0;
-			uav[UAV2] = radio.GetUAVCommend(UAV2)|UAV2;
+			uav[UAV2] = radio.GetUAVCommend(UAV2);
 		}
 		if(!radio.CheckUAV(UAV3)){
 			// std::cerr<<"UAV3 lost connect!"<<std::endl;
 			if(SetlostNum[2]> LimitLost)
-				uav[UAV3] = ROBOT_MODE_IN_INIT;
+				uav[UAV3] = ROBOT_MODE_IN_LOST;
 			else SetlostNum[2]++;
 		}else{
 			SetlostNum[2] = 0;
-			uav[UAV3] = radio.GetUAVCommend(UAV3)|UAV3;
+			uav[UAV3] = radio.GetUAVCommend(UAV3);
 		}
 		if(!radio.CheckUAV(AIM)){
 			if(SetlostNum[3]> LimitLost)
-				aim = ROBOT_MODE_IN_INIT|AIM;//丢失球
+				aim = ROBOT_MODE_IN_INIT;//丢失球
 			else SetlostNum[3]++;
 			// Smith = 0xff;
-			for(int i=0x01;i<0x08;i=i<<1){
-				if(uav[i]&ROBOT_MODE_IN_RETURN ){//有返回代表抓到了气球
-					aim = ROBOT_MODE_IN_RETURN|AIM;//带着球返回了
+			for(int i=0;i<UAV_size;i++){
+				if(uav[i]==ROBOT_MODE_IN_RETURN ){//有返回代表抓到了气球
+					aim = ROBOT_MODE_IN_RETURN;//带着球返回了
 					Smith =Marker(i);
 					SetlostNum[3] = 0;
 				}
 			}
 		}else{
 			SetlostNum[3] = 0;
-			aim = ROBOT_MODE_IN_CATCH|AIM;//找到球
+			aim = ROBOT_MODE_IN_CATCH;//找到球
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 	}
@@ -284,13 +284,109 @@ int main(int argc, const char** argv)
 	//    继续做扎气球任务
 	// 
 	
-	iter[UAV1] = Patharch(config["start_point1"].as<Value3>(),3,0.8);
-	iter[UAV2] = Patharch(config["start_point2"].as<Value3>(),3,-0.8);
-	iter[UAV3] = Patharch(config["start_point3"].as<Value3>(),3,0.8);
+	uint8_t SmithStatus[256]={0};
 
+	while(flag){
+		for(int i=0;i<UAV_size;i++){
+			SmithStatus[uav[i]]++;
+		}
+		for(int i=0;i<Status_size;i++){
+			if(SmithStatus[i]!=0){
+				switch(i){
+					case ROBOT_MODE_IN_INIT:{
+						//发送起飞命令
+						for(int i=0;i<UAV_size;i++){
+							if(uav[i]==ROBOT_MODE_IN_INIT){
+								UAV data(ROBOT_MODE_IN_TAKEOFF,i);
+								radio_thread.SetUAVData(Marker(i),data);
+								std::this_thread::sleep_for(std::chrono::milliseconds(20));
+							}
+						}
+						break;
+					}
+					case ROBOT_MODE_IN_TAKEOFF:{
+						//全部起飞后移动到指定位置
+						//发送起飞命令
+						for(int i=0;i<UAV_size;i++){
+							if(uav[i]==ROBOT_MODE_IN_TAKEOFF){
+								UAV data(ROBOT_MODE_IN_MOVETO,i);
+								data.Posion = config["start_point"+std::to_string(i+1)].as<Value3>();
+								radio_thread.SetUAVData(Marker(i),data);
+								std::this_thread::sleep_for(std::chrono::milliseconds(20));
+							}
+						}
+						break;
+					}
+					case ROBOT_MODE_IN_MOVETO:{
+						for(int i=0;i<UAV_size;i++){
+							if(uav[i]==ROBOT_MODE_IN_MOVETO){
+								auto NOW_Positon = radio_thread.GetUAVPosion(Marker(i));
+								auto AIM_Positon = config["start_point"+std::to_string(i+1)].as<Value3>();
+								float dis = distance(NOW_Positon,AIM_Positon);
+								if(dis<1){
+									UAV data(ROBOT_MODE_IN_LINE,i);
+									data.Posion = AIM_Positon;
+									data.Posion.Z = map_width;
+									radio_thread.SetUAVData(Marker(i),data);
+									std::this_thread::sleep_for(std::chrono::milliseconds(20));
+								}
+							}
+						}
+						break;
+					}
+					case ROBOT_MODE_IN_LINE:{
 
-	while(1){
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+						break;
+					}
+					case ROBOT_MODE_IN_ARCH:{
+						//不作用
+						break;
+					}
+					case ROBOT_MODE_IN_CATCH:{
+						//重新划分空域
+						for(int i=0;i<UAV_size;i++){
+							if(uav[i]==ROBOT_MODE_IN_CATCH){
+
+							}else if(uav[i]==ROBOT_MODE_IN_LINE){
+								UAV data(ROBOT_MODE_IN_ARCH,i);//分配空域
+								data.Posion.Y = 0;
+								data.Posion.Z = 10;
+								if(i==UAV1){
+									data.Posion.X = 0;
+								}else if(i==UAV2){
+									if(uav[UAV1]==ROBOT_MODE_IN_CATCH){
+										data.Posion.X = 0;
+									}else{
+										data.Posion.X = 50;
+									}
+								}else{
+									data.Posion.X = 50;
+								}
+								radio_thread.SetUAVData(Marker(i),data);
+								std::this_thread::sleep_for(std::chrono::milliseconds(20));
+							}
+						}
+						break;
+					}
+					case ROBOT_MODE_IN_STAB:{
+						//不作用
+						break;
+					}
+					case ROBOT_MODE_IN_RETURN:{
+
+						break;
+					}
+					case ROBOT_MODE_IN_LOST:{
+						break;
+					}
+					case ROBOT_MODE_IN_EMPTY:{
+						break;
+					}
+				}
+			}
+		}
+		memset(SmithStatus,0x0,Status_size);
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	flag = false;
 

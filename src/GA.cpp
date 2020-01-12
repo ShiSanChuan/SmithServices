@@ -49,7 +49,7 @@ void GA::addPoint(Value3 point){
 	std::lock_guard<std::mutex> lock(mut);
 	if(data.size()&&(distance(data.back(),point)>1)){
 		data.push_back(point);
-		if(fun(Gbest,data)>Accuracy){//新数据 模型不满足重排
+		if(fun(Gbest,data)>Accuracy+0.9){//新数据 模型不满足重排
 			init();
 			w=0.9;
 		}

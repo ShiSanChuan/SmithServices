@@ -11,14 +11,17 @@
 
 #define Device_size 5
 #define UAV_size 3
+#define Status_size 256
 typedef enum:unsigned char{
 	ROBOT_MODE_IN_INIT    = 0x00,//初始化
 	ROBOT_MODE_IN_TAKEOFF = 0x01,//自动起飞
 	ROBOT_MODE_IN_MOVETO  = 0x02,//飞到一个点
 	ROBOT_MODE_IN_LINE    = 0x03,//一条线飞
-	ROBOT_MODE_IN_CATCH   = 0x04,//抓气球
-	ROBOT_MODE_IN_STAB    = 0x05,//刺气球
-	ROBOT_MODE_IN_RETURN  = 0x06,//返回
+	ROBOT_MODE_IN_ARCH    = 0x04,//弓字型飞
+	ROBOT_MODE_IN_CATCH   = 0x05,//抓气球
+	ROBOT_MODE_IN_STAB    = 0x06,//刺气球
+	ROBOT_MODE_IN_RETURN  = 0x07,//返回
+	ROBOT_MODE_IN_LOST    = 0xfe,//时延太高丢失
 	ROBOT_MODE_IN_EMPTY   = 0xff,//空状态	
 }Status;
 
@@ -45,8 +48,9 @@ typedef struct Value3
 
 typedef struct UAV
 {
-	UAV(uint8_t situation=0,uint8_t ID=0){
+	UAV(uint8_t situation=0xff,uint8_t ID=0xff){
 		this->situation = situation;
+		this->ID = ID;
 		this->update = 0;
 		this->Posion.X = 0;
 		this->Posion.Y = 0;

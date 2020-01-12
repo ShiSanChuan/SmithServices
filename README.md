@@ -1,5 +1,5 @@
 # SmithServices
-加油啊，航空史密斯
+加油啊，猩红爱丽丝
 
 <img src="doc/demo.gif">
 
@@ -54,33 +54,44 @@ socat -d -d pty,raw,echo=0 pty,raw,echo=0
 
 ```
 typedef enum:unsigned char{
-	ROBOT_MODE_IN_INIT = 0x00,//初始化启动
-	ROBOT_MODE_IN_RETURN = 0x10,//返回
-	ROBOT_MODE_IN_MOVE = 0x20,//移动
-	ROBOT_MODE_IN_STAB = 0x40,//刺气球
-	ROBOT_MODE_IN_CATCH = 0x80,//抓气球	
+	ROBOT_MODE_IN_INIT    = 0x00,//初始化
+	ROBOT_MODE_IN_TAKEOFF = 0x01,//自动起飞
+	ROBOT_MODE_IN_MOVETO  = 0x02,//飞到一个点
+	ROBOT_MODE_IN_LINE    = 0x03,//一条线飞
+	ROBOT_MODE_IN_ARCH    = 0x04,//弓字型飞
+	ROBOT_MODE_IN_CATCH   = 0x05,//抓气球
+	ROBOT_MODE_IN_STAB    = 0x06,//刺气球
+	ROBOT_MODE_IN_RETURN  = 0x07,//返回
+	ROBOT_MODE_IN_LOST    = 0xfe,//时延太高丢失
+	ROBOT_MODE_IN_EMPTY   = 0xff,//空状态	
 }Status;
 typedef enum:unsigned char
 {
-	Service = 0x00,
-	UAV1 = 0x01,
-	UAV2 = 0x02,
-	UAV3 = 0x04,
-	AIM = 0x08
+	UAV1 = 0x00,
+	UAV2 = 0x01,
+	UAV3 = 0x02,
+	AIM = 0x03,
+	Service = 0x04
 }Marker;
 ```
-| |Head|CMD|Position|End|
+| |Head|CMD|UAV-x|Position|End|
 | --- | --- | --- | --- | --- |
-|ROBOT_MODE_IN_INIT | ff |00|XYZ| 0d |
-|ROBOT_MODE_IN_RETURN | ff |10|XYZ| 0d |
-|ROBOT_MODE_IN_MOVE | ff |20|XYZ| 0d |
-|ROBOT_MODE_IN_STAB | ff |40|XYZ| 0d |
-|ROBOT_MODE_IN_CATCH | ff |80|XYZ| 0d |
+|ROBOT_MODE_IN_INIT | ff |00|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_TAKEOFF | ff |01|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_MOVETO | ff |02|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_LINE | ff |03|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_ARCH | ff |04|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_CATCH | ff |05|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_STAB | ff |06|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_RETURN | ff |07|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_LOST | ff |fe|UAVx|XYZ| 0d |
+|ROBOT_MODE_IN_EMPTY | ff |ff|UAVx|XYZ| 0d |
 
 ## todo
 - ~~合并两个飞机代码~~
 - 添加TCP通信方式
-- 解决飞机启动飞行问题结合大疆wiki
+- ~~解决飞机启动飞行问题结合大疆wiki~~
 - 解决数传问题（或者通过遥控器控制）
-- 增加代码注释，方便修改问题
+- ~~增加代码注释，方便修改问题~~
+- 两架机协同扎球
 
