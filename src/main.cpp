@@ -305,14 +305,15 @@ int main(int argc, const char** argv)
 						break;
 					}
 					case ROBOT_MODE_IN_TAKEOFF:{
-						//全部起飞后移动到指定位置
+						//全部起飞后移动到指定位置 移动到指定位置为了防止碰撞 时间延长加大
 						//发送起飞命令
 						for(int i=0;i<UAV_size;i++){
 							if(uav[i]==ROBOT_MODE_IN_TAKEOFF){
 								UAV data(ROBOT_MODE_IN_MOVETO,i);
 								data.Posion = config["start_point"+std::to_string(i+1)].as<Value3>();
 								radio_thread.SetUAVData(Marker(i),data);
-								std::this_thread::sleep_for(std::chrono::milliseconds(20));
+								std::this_thread::sleep_for(std::chrono::seconds(2));
+								// std::this_thread::sleep_for(std::chrono::milliseconds(20));
 							}
 						}
 						break;

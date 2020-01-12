@@ -14,11 +14,11 @@ UAV_filed: &1 11.539999999999999
 UAV_speed: &2 0.0030000000000000001
 #UAV1 information
 start_point1: &3 
-  - 16.666667
+  - 83.333332
   - 0
   - 0
 first_point1: &4
-  - 16.666666
+  - 83.333332
   - 20
   - 10
 end_point1: &5
@@ -52,11 +52,11 @@ UAV2:
   - *10
 #UAV3 information
 start_point3: &13
-  - 83.333332
+  - 16.666667
   - 0
   - 0
 first_point3: &14
-  - 83.333332
+  - 16.666667
   - 20
   - 10
 end_point3: &15
