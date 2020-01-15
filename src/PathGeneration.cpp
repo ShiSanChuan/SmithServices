@@ -56,7 +56,7 @@ LinkList * Patharch(Value3 start,int curve,float precision){
             precision = -std::abs(precision);
             tmp.Y = map_width;
             for(int j=0;j<10;j++){
-                tmp.X +=  map_length/(curve*3*10);
+                tmp.X +=  75.0/(curve*3*10);
                 M = new LinkList(tmp);
                 reverse_path.push_back( new LinkList(tmp));//避免指针混乱
                 N->next = M;
@@ -69,7 +69,7 @@ LinkList * Patharch(Value3 start,int curve,float precision){
             precision = std::abs(precision);
             tmp.Y = 0;
             for(int j=0;j<10;j++){
-                tmp.X +=  map_length/(curve*3*10);
+                tmp.X +=  75.0/(curve*3*10);
                 M = new LinkList(tmp);
                 reverse_path.push_back( new LinkList(tmp));//避免指针混乱
                 N->next = M;

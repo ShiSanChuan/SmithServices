@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O0")
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 find_package(OpenCV  REQUIRED)
 find_package(Ceres REQUIRED)
-add_definitions(-D SIMULATE)
+# add_definitions(-D SIMULATE)
 add_subdirectory(unittest)
 
 INCLUDE_DIRECTORIES(include)

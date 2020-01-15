@@ -331,6 +331,7 @@ int main(int argc, const char** argv)
 									radio_thread.SetUAVData(Marker(i),data);
 									std::this_thread::sleep_for(std::chrono::milliseconds(20));
 								}
+								printf("%d move(%f,%f,%f)\n",i,NOW_Positon.X,NOW_Positon.Y,NOW_Positon.Z);
 							}
 						}
 						break;
@@ -397,6 +398,3 @@ int main(int argc, const char** argv)
 	FactorySolve::close();
     return 0;
 }
-//todo 8字模型？+ GA + 点适配进去
-//模拟？
-//显示 
