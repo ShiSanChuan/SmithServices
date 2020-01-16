@@ -2,7 +2,7 @@
 #include <mutex>
 
 UAV RadioListen::devices[Device_size];
-RadioInterface RadioListen::Radio;
+RadioInterface RadioListen::Radio[UAV_size];
 static std::mutex rmut;
 static std::mutex wmut;
 static void run(RadioInterface *Radio,UAV *devices){
@@ -35,13 +35,21 @@ bool RadioListen::CheckUAV(Marker ID){
     return data;
 }
 
-RadioListen::RadioListen(ThreadPool &pool ,std::string port){
-    Radio.init(port);//"/dev/ttyUSB0"
-    if(!Radio.isOpen()){
-        std::cerr<<"error open uart "<<port<<std::endl;
-        flag = false;
+RadioListen::RadioListen(ThreadPool &pool ,std::vector<std::string> port){  
+    if(port.size()>UAV_size){
+        std::cerr<<"too much port!"<<std::endl;
+        return;
     }
-    pool.enqueue(run,&this->Radio,this->devices);
+    for(int i=0;i<static_cast<int>(port.size());i++){
+        Radio[i].init(port[i]);//"/dev/ttyUSB0"
+        if(!Radio[i].isOpen()){
+            std::cerr<<"error open uart "<<port[i]<<std::endl;
+            flag = false;
+        }else{
+            std::cout<<"success open "<<port[i]<<std::endl;
+        }
+        pool.enqueue(run,&this->Radio[i],this->devices);
+    }
     return ;
 }
 
@@ -76,6 +84,7 @@ uint8_t RadioListen::GetUAVCommend(Marker ID){
     return data;    
 }
 void RadioListen::SetUAVData(Marker ID,UAV &data){
+    if(ID>UAV_size){std::cerr<<"SetUAVData out range!"<<std::endl;return;}
     std::lock_guard<std::mutex> lock(wmut);
     assert(ID==data.ID);
     RadioPacket sendPacket;
@@ -84,5 +93,5 @@ void RadioListen::SetUAVData(Marker ID,UAV &data){
     sendPacket.setFloatInBuffer(data.Posion.X, 3);
     sendPacket.setFloatInBuffer(data.Posion.Y, 7);
     sendPacket.setFloatInBuffer(data.Posion.Z, 11);
-    Radio.dataSend(sendPacket);
+    Radio[ID].dataSend(sendPacket);
 }

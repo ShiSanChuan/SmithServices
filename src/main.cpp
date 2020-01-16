@@ -44,7 +44,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
 	std::vector<std::pair<float, float> > Genpathdata;
 	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
-	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));
+	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));//遗传算法加谷歌求解器
 	// Circen* solve = (Circen*)(FactorySolve::getSolve(CircenSolve));
 
 	while(flag){
@@ -196,8 +196,12 @@ int main(int argc, const char** argv)
 	//传递参数
 	std::string yamlpath(argv[1]);
 	YAML::Node config = YAML::LoadFile(yamlpath);
-	std::string Listen_port = config["Listen_port"].as<std::string>();
-	std::string Simulate_port = config["Simulate_port"].as<std::string>();
+	std::string Listen_port0 = config["Listen_port0"].as<std::string>();
+	std::string Listen_port1 = config["Listen_port1"].as<std::string>();
+	std::string Listen_port2 = config["Listen_port2"].as<std::string>();
+	std::string Simulate_port0 = config["Simulate_port0"].as<std::string>();
+	std::string Simulate_port1 = config["Simulate_port1"].as<std::string>();
+	std::string Simulate_port2 = config["Simulate_port2"].as<std::string>();
 	map_width = config["map_width"].as<float>();
 	map_length = config["map_length"].as<float>();
 	UAV_filed = config["UAV_filed"].as<float>(); //视野范围
@@ -210,8 +214,9 @@ int main(int argc, const char** argv)
 	BALLON_Posion[3] = config["ballon_point3"].as<Value3>();
 	BALLON_Posion[4] = config["ballon_point4"].as<Value3>();
 	BALLON_Posion[5] = config["ballon_point5"].as<Value3>();
-    ThreadPool pool(30);//建立线程池
-	RadioListen radio_thread(pool,Listen_port);//监听串口
+    ThreadPool pool(40);//建立线程池
+	RadioListen radio_thread(pool,
+				std::vector<std::string>{Listen_port0,Listen_port1,Listen_port2});//监听串口
 	pool.enqueue(time_chech_UAV, radio_thread,50);//周期确定消息 50ms
 	//粒子群求解器
 	FactorySolve::addSolve(GaSolve, 3, 5, map_length, CostPathGeneration3)->Setthread(pool);//加入求解器
@@ -221,15 +226,16 @@ int main(int argc, const char** argv)
 	FactorySolve::addSolve(CircenSolve,0.001)->Setthread(pool);
 
 #ifdef SIMULATE
-	Simulate::init(pool,Simulate_port);//模拟器 UAV
+	Simulate::init(pool,
+				std::vector<std::string>{Simulate_port0,Simulate_port1,Simulate_port2});//模拟器 UAV
 	if(config["UAV1"])
-		Simulate::addUAV(UAV1)->init(pool,&Simulate::Radio,config["start_point1"].as<Value3>());
+		Simulate::addUAV(UAV1)->init(pool,&Simulate::Radio[0],config["start_point1"].as<Value3>());
 	if(config["UAV2"])
-		Simulate::addUAV(UAV2)->init(pool,&Simulate::Radio,config["start_point2"].as<Value3>());
+		Simulate::addUAV(UAV2)->init(pool,&Simulate::Radio[1],config["start_point2"].as<Value3>());
 	if(config["UAV3"])
-		Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio,config["start_point3"].as<Value3>());
+		Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio[2],config["start_point3"].as<Value3>());
 	if(config["Simulate_AIM"])
-		Simulate::addUAV(AIM)->init(pool, &Simulate::Radio,
+		Simulate::addUAV(AIM)->init(pool, &Simulate::Radio[0],
 			PathGeneration3(config["a"].as<float>(),
 							config["b"].as<float>(),
 							config["c"].as<float>()));
@@ -325,13 +331,22 @@ int main(int argc, const char** argv)
 								auto AIM_Positon = config["start_point"+std::to_string(i+1)].as<Value3>();
 								float dis = distance(NOW_Positon,AIM_Positon);
 								if(dis<1){
-									UAV data(ROBOT_MODE_IN_LINE,i);
-									data.Posion = AIM_Positon;
-									data.Posion.Z = map_width;
-									radio_thread.SetUAVData(Marker(i),data);
-									std::this_thread::sleep_for(std::chrono::milliseconds(20));
+									//直线飞行或者触发 弓字型搜索
+									// {
+									// 	UAV data(ROBOT_MODE_IN_LINE,i);
+									// 	data.Posion = AIM_Positon;
+									// 	data.Posion.Z = map_width;
+									// 	radio_thread.SetUAVData(Marker(i),data);
+									// 	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+									// }
+									{
+										UAV data(ROBOT_MODE_IN_ARCH,i);
+										data.Posion = AIM_Positon;
+										data.Posion.Z = 10;
+										radio_thread.SetUAVData(Marker(i),data);
+										std::this_thread::sleep_for(std::chrono::milliseconds(20));
+									}
 								}
-								printf("%d move(%f,%f,%f)\n",i,NOW_Positon.X,NOW_Positon.Y,NOW_Positon.Z);
 							}
 						}
 						break;

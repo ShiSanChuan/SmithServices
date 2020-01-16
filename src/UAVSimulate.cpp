@@ -4,7 +4,7 @@
 //模拟一个UAV飞行哦
 //
 //
-RadioInterface Simulate::Radio;
+RadioInterface Simulate::Radio[UAV_size];
 static std::mutex rmut;
 static std::mutex wmut;
 UAVSimulate* Simulate::Worker[Device_size];
@@ -293,11 +293,20 @@ void runwithpath(UAVSimulate *Suav){
 	}
 	flag =false;
 } 
-void Simulate::init(ThreadPool &pool,std::string port){
-	if(!Radio.isOpen()){
-		Radio.init(port);
+void Simulate::init(ThreadPool &pool,std::vector<std::string> port){
+	if(port.size()>UAV_size){
+		std::cerr<<"too much port!"<<std::endl;
+		return;
 	}
-	pool.enqueue(Workrun,&Radio, Worker);
+	for(int i=0;i<static_cast<int>(port.size());i++){
+		if(!Radio[i].isOpen()){
+			Radio[i].init(port[i]);
+		}else{
+			std::cerr<<"error open uart "<<port[i]<<std::endl;
+            flag = false;
+		}
+		pool.enqueue(Workrun,&Radio[i], Worker);
+	}	
 }
 void Simulate::close(){
 	for(int i=0;i<Device_size;i++){
@@ -332,7 +341,7 @@ void Simulate::SendPack(uint8_t CMD,uint8_t ID,Value3 data){
     sendPacket.setFloatInBuffer(data.X, 3);
     sendPacket.setFloatInBuffer(data.Y, 7);
     sendPacket.setFloatInBuffer(data.Z, 11);
-    Radio.dataSend(sendPacket);
+    Radio[ID].dataSend(sendPacket);
 }
 
 void UAVSimulate::init(ThreadPool &pool,RadioInterface *Radio,Value3 start){

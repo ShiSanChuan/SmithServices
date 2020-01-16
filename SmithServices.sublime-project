@@ -221,18 +221,6 @@
 					"shell_cmd": "make -j4 src/Solve.s"
 				},
 				{
-					"name": "src/UAV.o",
-					"shell_cmd": "make -j4 src/UAV.o"
-				},
-				{
-					"name": "src/UAV.i",
-					"shell_cmd": "make -j4 src/UAV.i"
-				},
-				{
-					"name": "src/UAV.s",
-					"shell_cmd": "make -j4 src/UAV.s"
-				},
-				{
 					"name": "src/UAVSimulate.o",
 					"shell_cmd": "make -j4 src/UAVSimulate.o"
 				},

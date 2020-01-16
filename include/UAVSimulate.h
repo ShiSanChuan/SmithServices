@@ -21,12 +21,12 @@ public:
 class Simulate
 {
 public:
-	static RadioInterface Radio;
+	static RadioInterface Radio[UAV_size];
 	static UAVSimulate* Worker[Device_size];
 private:
 	Simulate();
 public:
-	static void init(ThreadPool &pool,std::string port="/dev/ttyUSB1");
+	static void init(ThreadPool &pool,std::vector<std::string> port);
 	static UAVSimulate * addUAV(Marker ID);
 	static UAVSimulate* getUAV(Marker ID);
 	static void SendPack(uint8_t CMD,uint8_t ID,Value3 data);

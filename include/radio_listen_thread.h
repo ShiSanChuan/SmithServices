@@ -10,9 +10,9 @@ class RadioListen{
 private:
 	static UAV devices[Device_size];
 
-	static RadioInterface Radio;
+	static RadioInterface Radio[UAV_size];
 public:
-	RadioListen(ThreadPool &pool,std::string port="/dev/ttyUSB0");
+	RadioListen(ThreadPool &pool,std::vector<std::string> port);
 	~RadioListen();
 	UAV GetUAVData(Marker ID);
 	Value3 GetUAVPosion(Marker ID);
