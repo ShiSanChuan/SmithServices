@@ -41,7 +41,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 	cvplot::moveWindow(PSO, 1200, 0);
 	cvplot::resizeWindow(PSO, 480, 480);
 	auto &PSOfigure=cvplot::figure(PSO);
-	std::vector<std::pair<float, float> > error{std::make_pair(0, 20)};
+	std::vector<std::pair<float, float> > error{std::make_pair(0, 5)};
 	std::vector<std::pair<float, float> > Genpathdata;
 	// Ceres* solve = (Ceres*)(FactorySolve::getSolve(CeresSolve));
 	GA* solve = (GA*)(FactorySolve::getSolve(GaSolve));//遗传算法加谷歌求解器
@@ -85,7 +85,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 					solve->addPoint(data);//添加数据点
 				}
 			}
-			if(solve->Accuracy+1<20){//生成的估计路线
+			if(solve->Accuracy+1<5){//生成的估计路线
 				error.push_back(std::make_pair(error.size(), solve->Accuracy));
 				auto pathparam = solve->GetOptimal();
 				// printf("%f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],error.back().second);
@@ -135,7 +135,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 //定时检测
 auto time_chech_UAV = [](RadioListen &radio,int msec){
 	uint SetlostNum[4]={0};
-	const static int LimitLost = 100;//2.5s
+	const static int LimitLost = 50;//丢失多少个包视为丢失
 	while(flag){
 		if(!radio.CheckUAV(UAV1)){
 			// std::cerr<<"UAV1 lost connect!"<<std::endl;
@@ -291,7 +291,7 @@ int main(int argc, const char** argv)
 	// 
 	
 	uint8_t SmithStatus[256]={0};
-
+	UAV senddata[UAV_size];
 	while(flag){
 		for(int i=0;i<UAV_size;i++){
 			SmithStatus[uav[i]]++;
@@ -304,7 +304,7 @@ int main(int argc, const char** argv)
 						for(int i=0;i<UAV_size;i++){
 							if(uav[i]==ROBOT_MODE_IN_INIT){
 								UAV data(ROBOT_MODE_IN_TAKEOFF,i);
-								radio_thread.SetUAVData(Marker(i),data);
+								senddata[i] = data;
 								std::this_thread::sleep_for(std::chrono::milliseconds(20));
 							}
 						}
@@ -317,9 +317,7 @@ int main(int argc, const char** argv)
 							if(uav[i]==ROBOT_MODE_IN_TAKEOFF){
 								UAV data(ROBOT_MODE_IN_MOVETO,i);
 								data.Posion = config["start_point"+std::to_string(i+1)].as<Value3>();
-								radio_thread.SetUAVData(Marker(i),data);
-								std::this_thread::sleep_for(std::chrono::seconds(2));
-								// std::this_thread::sleep_for(std::chrono::milliseconds(20));
+								senddata[i] = data;
 							}
 						}
 						break;
@@ -336,15 +334,13 @@ int main(int argc, const char** argv)
 									// 	UAV data(ROBOT_MODE_IN_LINE,i);
 									// 	data.Posion = AIM_Positon;
 									// 	data.Posion.Z = map_width;
-									// 	radio_thread.SetUAVData(Marker(i),data);
-									// 	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+									// 	senddata[i] = data;
 									// }
-									{
+									{//test 工程 测试两机工字型搜索
 										UAV data(ROBOT_MODE_IN_ARCH,i);
 										data.Posion = AIM_Positon;
 										data.Posion.Z = 10;
-										radio_thread.SetUAVData(Marker(i),data);
-										std::this_thread::sleep_for(std::chrono::milliseconds(20));
+										senddata[i] = data;
 									}
 								}
 							}
@@ -379,8 +375,7 @@ int main(int argc, const char** argv)
 								}else{
 									data.Posion.X = 50;
 								}
-								radio_thread.SetUAVData(Marker(i),data);
-								std::this_thread::sleep_for(std::chrono::milliseconds(20));
+								senddata[i] = data;
 							}
 						}
 						break;
@@ -402,7 +397,22 @@ int main(int argc, const char** argv)
 				}
 			}
 		}
+		//避让计算 计算目标点区域位置
+		for(int i=0;i<UAV_size;i++){
+			if(i == senddata[i].ID){
+				// for(int j=0;j<UAV_size;j++){
+
+				// }
+				radio_thread.SetUAVData(Marker(i),senddata[i]);
+			}
+
+			if(senddata[i].situation == ROBOT_MODE_IN_TAKEOFF){//长时间延时避免碰撞
+				std::this_thread::sleep_for(std::chrono::seconds(2));
+			}else
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		}
 		memset(SmithStatus,0x0,Status_size);
+		memset(senddata,0xff,sizeof(UAV)*UAV_size);
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	flag = false;

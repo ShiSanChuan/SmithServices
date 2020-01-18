@@ -13,23 +13,44 @@
 ## build
 ~~需要google求解器~~
 ```shell
-
-```
-```shell
-mkdir build &  cd build
-cmake ..
-make
+# CMake
+sudo apt-get install cmake
+# google-glog + gflags
+sudo apt-get install libgoogle-glog-dev
+# BLAS & LAPACK
+sudo apt-get install libatlas-base-dev
+# Eigen3
+sudo apt-get install libeigen3-dev
+# SuiteSparse and CXSparse (optional)
+# - If you want to build Ceres as a *static* library (the default)
+#   you can use the SuiteSparse package in the main Ubuntu package
+#   repository:
+sudo apt-get install libsuitesparse-dev
+# - However, if you want to build Ceres as a *shared* library, you must
+#   add the following PPA:
+sudo add-apt-repository ppa:bzindovic/suitesparse-bugfix-1319687
+sudo apt-get update
+sudo apt-get install libsuitesparse-dev
+tar zxf ceres-solver-1.14.0.tar.gz
+mkdir ceres-bin
+cd ceres-bin
+cmake ../ceres-solver-1.14.0
+make -j3
+make test
+# Optionally install Ceres, it can also be exported using CMake which
+# allows Ceres to be used without requiring installation, see the documentation
+# for the EXPORT_BUILD_DIR option for more information.
+make install
 ```
 
 ### 虚拟串口
 因为测试用的CH340G为半双工，不能同发同受，可以用虚拟串口测试
+现在是三个串口因此需要,三队虚拟串口用于测试,分别写入到param.yaml参数文件中
 ```shell
 sudo apt-get install socat
 socat -d -d pty,raw,echo=0 pty,raw,echo=0
 
 ```
-
-## run
 ### 配置文件 param.yaml
 - map_width : 地图宽
 - map_length : 地图长
@@ -44,6 +65,19 @@ socat -d -d pty,raw,echo=0 pty,raw,echo=0
 - end_point ： UAV返回坐标
 - Simulate_speed : 仿真目标机速度
 - ballon_point : 气球坐标
+
+### 接口绑定
+除了realsense接口绑定
+```shell
+#底下摄像头                                                      
+KERNEL=="video*",ATTRS{idVendor}=="0ac8",ATTRS{idProduct}=="3370",SYMLINK+="vid"
+#舵机板USB                                               
+KERNELS=="1-3.4",  MODE:="0666", GROUP:="dialout",  SYMLINK+="device_0"         
+#通信数传                                                     
+KERNELS=="1-3.3",  MODE:="0666", GROUP:="dialout",  SYMLINK+="device_1" 
+```
+
+## run
 
 ```shell
 ./bin/RunService param.yaml 2>/dev/null
@@ -89,9 +123,9 @@ typedef enum:unsigned char
 
 ## todo
 - ~~合并两个飞机代码~~
-- 添加TCP通信方式
+- ~~添加TCP通信方式~~ socat可以重定向替代
 - ~~解决飞机启动飞行问题结合大疆wiki~~
-- 解决数传问题（或者通过遥控器控制）
+- ~~解决数传问题（或者通过遥控器控制）~~ 数传测试正常
 - ~~增加代码注释，方便修改问题~~
 - 两架机协同扎球
 
