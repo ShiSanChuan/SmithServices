@@ -1,6 +1,7 @@
 #include "UAVSimulate.h"
 #include "PathGeneration.h"
 #include <random>
+#include <fstream>
 //模拟一个UAV飞行哦
 //
 //
@@ -31,8 +32,8 @@ static void Workrun(RadioInterface *Radio,UAVSimulate** Worker){
 }
 
 void run(RadioInterface *Radio,UAVSimulate *Suav){
-	float speed = UAV_speed;//飞行速度 km/h -> 1/360 m/ms 
-	float field = UAV_filed;	 // 可以看见球的范围
+	double speed = UAV_speed;//飞行速度 km/h -> 1/360 m/ms 
+	double field = UAV_filed;	 // 可以看见球的范围
 	Value3 backaim;
 	bool return_flag = false;
 	uint8_t ID = Suav->uav.ID;
@@ -48,7 +49,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 		}
 	}
 	printf("ID %d situation %01x\n", ID,situation);
-	LinkList *Line = nullptr;
+	LinkList *Line = nullptr;//运动一次后停止
 	LinkList *Arch = nullptr;
 	while(flag){
 		if(situation!=Suav->uav.situation){//改变状态 抓取和刺球没有权限
@@ -76,8 +77,19 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 				}
 				case ROBOT_MODE_IN_LINE:{//线型移动
 					printf("[control model mode ]: %d Switch to LINE Mode!\n",ID);
-					if(Line==nullptr)
+					if(Line==nullptr){
 						Line = Pathline(Value3(Suav->uav.Posion.X,Suav->uav.Posion.Y,5),Suav->uav.Posion.Z,0.8);
+					}
+					{//test
+						std::fstream file("linepath_"+std::to_string(Suav->uav.ID)+".csv",std::ios::out);
+						LinkList * N = Line;
+						file<<"X\tY\tZ\n";
+						while(N!=nullptr&&N->next!=Line){
+							file<<N->data.X<<"\t"<<N->data.Y<<"\t"<<N->data.Z<<"\n";
+							N=N->next;
+						}
+						file.close();
+					}
 					printf("[control model mode ]: %d LINE Mode IS OK!\n",ID);
 					break;
 				}
@@ -85,6 +97,16 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					printf("[control model mode ]: %d Switch to STAB Mode!\n",ID);
 					if(Arch==nullptr)
 						Arch = Patharch(Value3(Suav->uav.Posion.X,Suav->uav.Posion.Y,5),Suav->uav.Posion.Z,0.8);
+					{//test
+						std::fstream file("archpath_"+std::to_string(Suav->uav.ID)+".csv",std::ios::out);
+						LinkList * N = Arch;
+						file<<"X\tY\tZ\n";
+						while(N!=nullptr&&N->next!=Arch){
+							file<<N->data.X<<"\t"<<N->data.Y<<"\t"<<N->data.Z<<"\n";
+							N=N->next;
+						}
+						file.close();
+					}
 					printf("[control model mode ]: %d STAB Mode IS OK!\n",ID);
 					break;
 				}
@@ -118,30 +140,33 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 			case ROBOT_MODE_IN_LINE:{//线型移动
 				{
 					UAVSimulate* aim = Simulate::getUAV(AIM);
-					float dis = distance(aim->uav.Posion,NOW_Position);
+					double dis = distance(aim->uav.Posion,NOW_Position);
 					if(dis<std::abs(aim->uav.Posion.Z - NOW_Position.Z)*1.2){//视野里
 						Suav->uav.situation = ROBOT_MODE_IN_CATCH;
 					}
 				}
 				if(situation == ROBOT_MODE_IN_LINE){
-					float dis = distance(NOW_Position,Line->data);
+					double dis = distance(NOW_Position,Line->data);
 					AIM_Position = Line->data;
 					while(dis<1.6){
 						Line = Line->next;
 						dis = distance(NOW_Position,Line->data);
 					}
 					//移动
-					float radio = (speed*50)/dis;
+					double radio = (speed*50)/dis;
 					NOW_Position.X = NOW_Position.X + (Line->data.X - NOW_Position.X)*radio;
 					NOW_Position.Y = NOW_Position.Y + (Line->data.Y - NOW_Position.Y)*radio;
 					NOW_Position.Z = NOW_Position.Z + (Line->data.Z - NOW_Position.Z)*radio*0.3;
+					if(Line->next == nullptr){
+						Suav->uav.situation = ROBOT_MODE_IN_RETURN;
+					}
 				}
 				break;
 			}
 			case ROBOT_MODE_IN_ARCH:{
 				for(int i=0;i<BALLON_num;i++){
 					if(BALLON_Posion[i].Z==0)continue;//已扎到
-					float dis = distance(NOW_Position,BALLON_Posion[i]);
+					double dis = distance(NOW_Position,BALLON_Posion[i]);
 					if(dis<UAV_low_filed){
 						BALL_p = nullptr;
 						BALL_p = &BALLON_Posion[i];
@@ -150,15 +175,18 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					}
 				}
 				if(situation == ROBOT_MODE_IN_ARCH){
-					float dis = distance(Arch->data,NOW_Position);
+					double dis = distance(Arch->data,NOW_Position);
 					if(dis<1.6){
 						Arch = Arch->next;
 						dis = distance(Arch->data,NOW_Position);
 					}
-					float radio = (speed*50)/dis;
+					double radio = (speed*50)/dis;
 					NOW_Position.X = NOW_Position.X + (Arch->data.X - NOW_Position.X)*radio;
 					NOW_Position.Y = NOW_Position.Y + (Arch->data.Y - NOW_Position.Y)*radio;
 					NOW_Position.Z = NOW_Position.Z + (Arch->data.Z - NOW_Position.Z)*radio*0.3;
+				}
+				if(Arch->next == nullptr){
+					Suav->uav.situation = ROBOT_MODE_IN_RETURN;
 				}
 				break;
 			}
@@ -168,8 +196,8 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					std::abs(aim->uav.Posion.Y - NOW_Position.Y)<0.5 ){
 					Suav->uav.situation = ROBOT_MODE_IN_RETURN;
 				}else{
-					float dis = distance(aim->uav.Posion,NOW_Position);
-					float radio = (speed*50)/dis;
+					double dis = distance(aim->uav.Posion,NOW_Position);
+					double radio = (speed*50)/dis;
 					NOW_Position.X = NOW_Position.X + (aim->uav.Posion.X - NOW_Position.X)*radio;
 					NOW_Position.Y = NOW_Position.Y + (aim->uav.Posion.Y - NOW_Position.Y)*radio;
 					NOW_Position.Z = NOW_Position.Z + (aim->uav.Posion.Z - NOW_Position.Z)*radio*0.3;
@@ -179,7 +207,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 				break;
 			}
 			case ROBOT_MODE_IN_STAB:{//刺气球
-				float dis = distance(*BALL_p,NOW_Position);
+				double dis = distance(*BALL_p,NOW_Position);
 				if(dis<speed*50){
 					assert(BALL_p!=nullptr);
 					BALL_p->Z = 0;//已经被刺过	
@@ -187,7 +215,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 					Suav->uav.situation = ROBOT_MODE_IN_ARCH;
 				}else{
 					assert(BALL_p!=nullptr);
-					float radio = (speed*50)/dis;
+					double radio = (speed*50)/dis;
 					NOW_Position.X = NOW_Position.X + (BALL_p->X - NOW_Position.X)*radio;
 					NOW_Position.Y = NOW_Position.Y + (BALL_p->Y - NOW_Position.Y)*radio;
 					NOW_Position.Z = NOW_Position.Z + (BALL_p->Z - NOW_Position.Z)*radio*0.3;
@@ -195,15 +223,15 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 				break;
 			}
 			case ROBOT_MODE_IN_RETURN:{//返回
-				float dis = distance(AIM_Position,NOW_Position);
-				float radio = (speed*50)/dis;
+				double dis = distance(AIM_Position,NOW_Position);
+				double radio = (speed*50)/dis;
 				NOW_Position.X = NOW_Position.X + (AIM_Position.X - NOW_Position.X)*radio;
 				NOW_Position.Y = NOW_Position.Y + (AIM_Position.Y - NOW_Position.Y)*radio;
 				NOW_Position.Z = NOW_Position.Z + (AIM_Position.Z - NOW_Position.Z)*radio*0.3;
 			}
 			case ROBOT_MODE_IN_MOVETO:{//移动到一个点
-				float dis = distance(AIM_Position,NOW_Position);
-				float radio = (speed*50)/dis;
+				double dis = distance(AIM_Position,NOW_Position);
+				double radio = (speed*50)/dis;
 				NOW_Position.X = NOW_Position.X + (AIM_Position.X - NOW_Position.X)*radio;
 				NOW_Position.Y = NOW_Position.Y + (AIM_Position.Y - NOW_Position.Y)*radio;
 				NOW_Position.Z = NOW_Position.Z + (AIM_Position.Z - NOW_Position.Z)*radio*0.3;
@@ -220,8 +248,8 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 	flag =false;
 }
 void runwithpath(UAVSimulate *Suav){
-	float speed = 0.002;//飞行速度
-	float dis;
+	double speed = 0.002;//飞行速度
+	double dis;
 	uint8_t situation;
 	int64_t m = rand()%(Suav->path.size());
 	Marker Smith;
@@ -266,7 +294,7 @@ void runwithpath(UAVSimulate *Suav){
 					start = start->next;
 					dis = distance(start->data,Suav->uav.Posion);
 				}
-				float radio = (speed*50)/dis;
+				double radio = (speed*50)/dis;
 				Suav->uav.Posion.X = Suav->uav.Posion.X + (start->data.X - Suav->uav.Posion.X)*radio;
 				Suav->uav.Posion.Y = Suav->uav.Posion.Y + (start->data.Y - Suav->uav.Posion.Y)*radio;
 				Suav->uav.Posion.Z = Suav->uav.Posion.Z + (start->data.Z - Suav->uav.Posion.Z)*radio;

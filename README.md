@@ -43,6 +43,14 @@ make test
 make install
 ```
 
+编译代码,编译文件在bin文件下产生
+```shell
+mkdir build 
+cd build
+cmake ..
+make -j4
+```
+
 ### 虚拟串口
 因为测试用的CH340G为半双工，不能同发同受，可以用虚拟串口测试
 现在是三个串口因此需要,三队虚拟串口用于测试,分别写入到param.yaml参数文件中

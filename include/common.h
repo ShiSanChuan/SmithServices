@@ -102,16 +102,16 @@ namespace YAML {//解析用
 #define PYELLOW               "\e[1;33m"
 #define PWHITE                "\e[1;37m"
 
-extern float pi ;
+extern double pi ;
 
 //Size
-extern float map_width ;
-extern float map_length;
+extern double map_width ;
+extern double map_length;
 //UAV
 extern float UAV_filed ;//视野范围
-extern const float UAV_low_filed ;
-extern float UAV_speed ; //速度
-extern float Simulate_speed ;
+extern const double UAV_low_filed ;
+extern double UAV_speed ; //速度
+extern double Simulate_speed ;
 extern Value3 BALLON_Posion[6];
 extern int BALLON_num ;
 extern int flag;

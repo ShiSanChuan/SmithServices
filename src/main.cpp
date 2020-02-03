@@ -14,18 +14,18 @@ static unsigned char uav[16]={0};
 static LinkList* iter[16]={0};
 static unsigned char aim=0x00;
 static uint8_t Smith=0xff;
-float pi = 3.1415926;
+double pi = 3.1415926;
 //Size
-float map_width = 40;
-float map_length = 100;
+double map_width = 40;
+double map_length = 100;
 //UAV
 float UAV_filed = 11.54; //视野范围
-const float UAV_low_filed = 7; // 下面相机视野，没有文件读取
-float UAV_speed = 0.006; //速度
+const double UAV_low_filed = 7; // 下面相机视野，没有文件读取
+double UAV_speed = 0.006; //速度
 int BALLON_num = 6;
 Value3 BALLON_Posion[6] = {0};
 int AIM_num = 1;
-float Simulate_speed = 0.002;
+double Simulate_speed = 0.002;
 
 //绘图
 auto draw_pic = [](RadioListen &radio,int msec){
@@ -85,7 +85,7 @@ auto draw_pic = [](RadioListen &radio,int msec){
 					solve->addPoint(data);//添加数据点
 				}
 			}
-			if(solve->Accuracy+1<5){//生成的估计路线
+			if(solve->Accuracy+1<20){//生成的估计路线
 				error.push_back(std::make_pair(error.size(), solve->Accuracy));
 				auto pathparam = solve->GetOptimal();
 				// printf("%f %f %f error: %f\n",pathparam[0],pathparam[1],pathparam[2],error.back().second);
@@ -202,12 +202,12 @@ int main(int argc, const char** argv)
 	std::string Simulate_port0 = config["Simulate_port0"].as<std::string>();
 	std::string Simulate_port1 = config["Simulate_port1"].as<std::string>();
 	std::string Simulate_port2 = config["Simulate_port2"].as<std::string>();
-	map_width = config["map_width"].as<float>();
-	map_length = config["map_length"].as<float>();
+	map_width = config["map_width"].as<double>();
+	map_length = config["map_length"].as<double>();
 	UAV_filed = config["UAV_filed"].as<float>(); //视野范围
-	UAV_speed = config["UAV_speed"].as<float>(); //速度
-	BALLON_num = config["BALLON_num"].as<float>();
-	Simulate_speed = config["Simulate_speed"].as<float>();
+	UAV_speed = config["UAV_speed"].as<double>(); //速度
+	BALLON_num = config["BALLON_num"].as<double>();
+	Simulate_speed = config["Simulate_speed"].as<double>();
 	BALLON_Posion[0] = config["ballon_point0"].as<Value3>();
 	BALLON_Posion[1] = config["ballon_point1"].as<Value3>();
 	BALLON_Posion[2] = config["ballon_point2"].as<Value3>();
@@ -236,9 +236,9 @@ int main(int argc, const char** argv)
 		Simulate::addUAV(UAV3)->init(pool,&Simulate::Radio[2],config["start_point3"].as<Value3>());
 	if(config["Simulate_AIM"])
 		Simulate::addUAV(AIM)->init(pool, &Simulate::Radio[0],
-			PathGeneration3(config["a"].as<float>(),
-							config["b"].as<float>(),
-							config["c"].as<float>()));
+			PathGeneration3(config["a"].as<double>(),
+							config["b"].as<double>(),
+							config["c"].as<double>()));
 
 #endif
 	pool.enqueue(draw_pic,radio_thread,50);//可视化
@@ -264,8 +264,7 @@ int main(int argc, const char** argv)
 		radio_thread.SetUAVData(UAV3,data);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	time_t totalseconds = time(NULL);
-	struct tm *st = localtime(&totalseconds);
+	clock_t start = clock();
 	//服务端为多对一模式
 	//      / UAV1
 	//Smith - UAV2
@@ -292,6 +291,11 @@ int main(int argc, const char** argv)
 	
 	uint8_t SmithStatus[256]={0};
 	UAV senddata[UAV_size];
+	std::fstream logfile("datalog.csv",std::ios::out);
+	logfile<<"UAV1X\tUAV1Y\tUAV1Z\tUAV1situation\tUAV1_t\t";
+	logfile<<"UAV2X\tUAV2Y\tUAV2Z\tUAV2situation\tUAV2_t\t";
+	logfile<<"UAV3X\tUAV3Y\tUAV3Z\tUAV3situation\tUAV3_t\t";
+	logfile<<"\n";
 	while(flag){
 		for(int i=0;i<UAV_size;i++){
 			SmithStatus[uav[i]]++;
@@ -329,19 +333,18 @@ int main(int argc, const char** argv)
 								auto AIM_Positon = config["start_point"+std::to_string(i+1)].as<Value3>();
 								float dis = distance(NOW_Positon,AIM_Positon);
 								if(dis<1){
-									//直线飞行或者触发 弓字型搜索
-									// {
-									// 	UAV data(ROBOT_MODE_IN_LINE,i);
-									// 	data.Posion = AIM_Positon;
-									// 	data.Posion.Z = map_width;
-									// 	senddata[i] = data;
-									// }
-									{//test 工程 测试两机工字型搜索
-										UAV data(ROBOT_MODE_IN_ARCH,i);
+									{//直线飞行或者触发 弓字型搜索
+										UAV data(ROBOT_MODE_IN_LINE,i);
 										data.Posion = AIM_Positon;
-										data.Posion.Z = 10;
+										data.Posion.Z = map_width;
 										senddata[i] = data;
 									}
+									// {//test 工程 测试两机工字型搜索
+									// 	UAV data(ROBOT_MODE_IN_ARCH,i);
+									// 	data.Posion = AIM_Positon;
+									// 	data.Posion.Z = 10;
+									// 	senddata[i] = data;
+									// }
 								}
 							}
 						}
@@ -385,7 +388,10 @@ int main(int argc, const char** argv)
 						break;
 					}
 					case ROBOT_MODE_IN_RETURN:{
-
+						if(SmithStatus[ROBOT_MODE_IN_RETURN]==UAV_size){
+							std::cout<<"all work finish!"<<std::endl;
+							flag = false;
+						}
 						break;
 					}
 					case ROBOT_MODE_IN_LOST:{
@@ -411,12 +417,22 @@ int main(int argc, const char** argv)
 			}else
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		}
+		for(int i=0;i<UAV_size;i++){
+			clock_t end = clock();
+			auto NOW_Positon = radio_thread.GetUAVPosion(Marker(i));
+			logfile<<NOW_Positon.X<<"\t";
+			logfile<<NOW_Positon.Y<<"\t";
+			logfile<<NOW_Positon.Z<<"\t";
+			logfile<<(int)uav[i]<<"\t";
+			logfile<<(double)(end-start)/CLOCKS_PER_SEC<<"\t";
+		}
+		logfile<<"\n";
 		memset(SmithStatus,0x0,Status_size);
 		memset(senddata,0xff,sizeof(UAV)*UAV_size);
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 	flag = false;
-
+	logfile.close();
 #ifdef SIMULATE
 	Simulate::close();
 #endif

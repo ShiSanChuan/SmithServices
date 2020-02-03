@@ -44,7 +44,7 @@ Ceres::Ceres(){
 	Accuracy = INT16_MAX;
 	rebuild = false;
 	
-	Gbest = std::vector<float> {map_width,map_width,map_length/2,map_width/2};	
+	Gbest = std::vector<double> {map_width,map_width,map_length/2,map_width/2};	
 }
 Ceres::~Ceres(){
 
@@ -63,7 +63,7 @@ void Ceres::addPoint(Value3 point){
 		rebuild = true;
 	}
 }
-std::vector<float> Ceres::GetOptimal(){
+std::vector<double> Ceres::GetOptimal(){
 	std::lock_guard<std::mutex> lock(mut);
 	return Gbest;
 }

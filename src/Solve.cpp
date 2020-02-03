@@ -7,8 +7,8 @@ GA* FactorySolve::GASolver;
 Circen* FactorySolve::CircenSolver;
 
 GA* FactorySolve::addSolve(Solve solve,int para_num,
-	float dmin,float dmax,
-	float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data)){
+	double dmin,double dmax,
+	double(*_fun)(std::vector<double> &argv,std::vector<Value3> &data)){
 
 	if(GASolver!=nullptr){
 		return GASolver;
@@ -27,7 +27,7 @@ Ceres* FactorySolve::addSolve(Solve solve){
 	}
 	return nullptr;
 }
-Circen* FactorySolve::addSolve(Solve solve,float precision){
+Circen* FactorySolve::addSolve(Solve solve,double precision){
 	if(CircenSolver!=nullptr){
 		return CircenSolver;
 	}else{

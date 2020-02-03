@@ -3,10 +3,10 @@
 #include "random"
 #include <stdint.h>
 #include <algorithm>
-float distance(Value3 v1,Value3 v2){
-	float dx = v1.X - v2.X;
-	float dy = v1.Y - v2.Y;
-	float dz = v1.Z - v2.Z;
+double distance(Value3 v1,Value3 v2){
+	double dx = v1.X - v2.X;
+	double dy = v1.Y - v2.Y;
+	double dz = v1.Z - v2.Z;
 	return sqrt(dx*dx+dy*dy+dz*dz);
 }
 enum Model
@@ -15,7 +15,7 @@ enum Model
 	twocircle,
 	linewithcircle
 };
-LinkList *Pathline(Value3 start,int line_size,float precision){
+LinkList *Pathline(Value3 start,int line_size,double precision){
 	LinkList * head = new LinkList(start);
 	LinkList * N = head;
 	LinkList * M;
@@ -24,7 +24,7 @@ LinkList *Pathline(Value3 start,int line_size,float precision){
 	tmp.Y = start.Y;
 	tmp.Z = start.Z;
 	std::vector<LinkList*> reverse_path;
-	for(float i=0;i<line_size;i+=precision){
+	for(double i=0;i<line_size;i+=precision){
 		tmp.Y +=precision;
 		M = new LinkList(tmp);
 		reverse_path.push_back( new LinkList(tmp));
@@ -39,15 +39,14 @@ LinkList *Pathline(Value3 start,int line_size,float precision){
 	N->next = head;
 	return head;
 }
-LinkList * Patharch(Value3 start,int curve,float precision){
+LinkList * Patharch(Value3 start,int curve,double precision){
     LinkList * head = new LinkList(start);
     LinkList * N = head;
     LinkList * M;
-    float high = 5;
     Value3 tmp;
     tmp.X = start.X;
     tmp.Y = start.Y;
-    tmp.Z = high;
+    tmp.Z = start.Z;
     std::vector<LinkList*> reverse_path;
     for(int i = 0;i<=curve;){
         if(tmp.Y  > map_width){
@@ -56,7 +55,7 @@ LinkList * Patharch(Value3 start,int curve,float precision){
             precision = -std::abs(precision);
             tmp.Y = map_width;
             for(int j=0;j<10;j++){
-                tmp.X +=  75.0/(curve*3*10);
+                tmp.X +=  map_length/(curve*2*10);
                 M = new LinkList(tmp);
                 reverse_path.push_back( new LinkList(tmp));//避免指针混乱
                 N->next = M;
@@ -69,7 +68,7 @@ LinkList * Patharch(Value3 start,int curve,float precision){
             precision = std::abs(precision);
             tmp.Y = 0;
             for(int j=0;j<10;j++){
-                tmp.X +=  75.0/(curve*3*10);
+                tmp.X +=  map_length/(curve*2*10);
                 M = new LinkList(tmp);
                 reverse_path.push_back( new LinkList(tmp));//避免指针混乱
                 N->next = M;
@@ -82,31 +81,31 @@ LinkList * Patharch(Value3 start,int curve,float precision){
         N->next = M;
         N = N->next;
     }
-    reverse(reverse_path.begin(),reverse_path.end());
-    for(auto &p:reverse_path){
-        N->next = p;
-        N = N->next;
-    }
-    N->next = head;
+    // reverse(reverse_path.begin(),reverse_path.end());
+    // for(auto &p:reverse_path){
+    //     N->next = p;
+    //     N = N->next;
+    // }
+    // N->next = head;
     return head;
 }
 
 /**
  * 第一个模型
  */
-std::vector<Value3> PathGeneration(float a,float b,float c, float d,float precision){
+std::vector<Value3> PathGeneration(double a,double b,double c, double d,double precision){
 	std::vector<Value3> path;
 	Value3 tmp;
-	float high = 20;
-	float r;
-	for(float p=-pi/4;p<pi/4;p+=precision){
+	double high = 20;
+	double r;
+	for(double p=-pi/4;p<pi/4;p+=precision){
 		r = sqrt(std::cos(2*p));
 		tmp.X=a*r*std::cos(p)+c;
 		tmp.Y=b*r*std::sin(p)+d;
 		tmp.Z=high;
 		path.push_back(tmp);
 	}
-	for(float p=3*pi/4+precision;p<=5*pi/4;p+=precision){
+	for(double p=3*pi/4+precision;p<=5*pi/4;p+=precision){
 		r = sqrt(std::cos(2*p));
 		tmp.X=a*r*std::cos(p)+c;
 		tmp.Y=-b*r*std::sin(p)+d;
@@ -115,19 +114,19 @@ std::vector<Value3> PathGeneration(float a,float b,float c, float d,float precis
 	}
 	return path;
 }
-float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
+double  CostPathGeneration(std::vector<double> &argv,std::vector<Value3> &data){
 	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
 	double error = 0.0;
-	float x = 0.0;
-	float y = 0.0;
-	float x2 = 0.0;
+	double x = 0.0;
+	double y = 0.0;
+	double x2 = 0.0;
 	int size = data.size();//没有加锁，因此不能多变
 	if((0<(argv[2]-argv[0]))&&
 		((argv[0]+argv[2])<map_length)&&
 		(0<(argv[3]-argv[1]))&&
 		((argv[3]+argv[1])<map_width)){
 		for(int i=0;i<size;i++){
-			float minx = INT16_MAX;
+			double minx = INT16_MAX;
 			auto tmp = PathGeneration(argv[0],argv[1],argv[2],argv[3],0.5);
 			for(auto &p:tmp){
 				minx = std::min(minx, distance(p,data[i] ) );
@@ -139,21 +138,21 @@ float  CostPathGeneration(std::vector<float> &argv,std::vector<Value3> &data){
 }
 
 //第二个模型
-std::vector<Value3> PathGeneration2(float x,float y,float r, float scale,float det,float precision){
+std::vector<Value3> PathGeneration2(double x,double y,double r, double scale,double det,double precision){
 	std::vector<Value3> path;
 	Value3 tmp;
-	float x0 = x+r*std::cos(det);
-	float y0 = y+r*std::sin(det);
-	float high = 20;
-	for(float i=pi;i<3*pi;i+=precision){
+	double x0 = x+r*std::cos(det);
+	double y0 = y+r*std::sin(det);
+	double high = 20;
+	for(double i=pi;i<3*pi;i+=precision){
 		tmp.X = x0+r*std::cos(i);
 		tmp.Y = y0+scale*r*std::sin(i);
 		tmp.Z = high;
 		path.push_back(tmp);
 	}
-	float x1 = x-r*std::cos(det);
-	float y1 = y-r*std::sin(det);
-	for(float i=0;i<2*pi;i+=precision){
+	double x1 = x-r*std::cos(det);
+	double y1 = y-r*std::sin(det);
+	for(double i=0;i<2*pi;i+=precision){
 		tmp.X = x1+r*std::cos(i);
 		tmp.Y = y1+scale*r*std::sin(i);
 		tmp.Z = high;
@@ -161,14 +160,14 @@ std::vector<Value3> PathGeneration2(float x,float y,float r, float scale,float d
 	}
 	return path;
 }
-float  CostPathGeneration2(std::vector<float> &argv,std::vector<Value3> &data){
+double  CostPathGeneration2(std::vector<double> &argv,std::vector<Value3> &data){
 	//argv[0]:x argv[1]:y argv[2]:r argv[3]:det
 	double error = 0.0;
-	float x = argv[0];
-	float y = argv[1];
-	float r = argv[2];
-	float scale = argv[3];
-	float det = argv[4];
+	double x = argv[0];
+	double y = argv[1];
+	double r = argv[2];
+	double scale = argv[3];
+	double det = argv[4];
 	int size = data.size();//没有加锁，因此不能多变
 	Value3 point1(x+r*std::cos(det),y+r*std::sin(det),20);
 	Value3 point2(x-r*std::cos(det),y-r*std::sin(det),20);
@@ -181,10 +180,10 @@ float  CostPathGeneration2(std::vector<float> &argv,std::vector<Value3> &data){
 	return error/size;
 }
 //第三个模型
-std::vector<Value3> PathGeneration3(float r,float c,float d,float det,float precision){
+std::vector<Value3> PathGeneration3(double r,double c,double d,double det,double precision){
 	std::vector<Value3> path;
 	Value3 tmp;
-	float high = 20;
+	double high = 20;
 	double speed = 2;
 	double sampleTime = 0.1;
 	double T = 2*r/speed;
@@ -221,7 +220,7 @@ std::vector<Value3> PathGeneration3(float r,float c,float d,float det,float prec
     }    
 	return path;
 }
-float  CostPathGeneration3(std::vector<float> &argv,std::vector<Value3> &data){
+double  CostPathGeneration3(std::vector<double> &argv,std::vector<Value3> &data){
 	//argv[0]:a argv[1]:b argv[2]:c argv[3]:d
 	// if(arg)
 	if((argv[0]>= argv[2])||(argv[0]>=map_width-argv[2]))
@@ -254,7 +253,7 @@ float  CostPathGeneration3(std::vector<float> &argv,std::vector<Value3> &data){
 std::vector<Value3> BallonGeneration(int width,int length){
 	std::vector<Value3> Point;
 	Value3 tmp;
-	float high = 10;
+	double high = 10;
 	for(int i=0;i<BALLON_num;i++){
 		tmp.X = rand()%length;
 		tmp.Y = rand()%width;

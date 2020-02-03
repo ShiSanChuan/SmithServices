@@ -18,8 +18,8 @@ void runPSO(GA *pso){
 	flag = false;
 }
 
-GA::GA(int para_num,float dmin,float dmax,
-	float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data)){
+GA::GA(int para_num,double dmin,double dmax,
+	double(*_fun)(std::vector<double> &argv,std::vector<Value3> &data)){
 	fun = _fun;
 	this->dmin = dmin;
 	this->dmax = dmax;
@@ -33,8 +33,8 @@ GA::GA(int para_num,float dmin,float dmax,
 	this->para_num = para_num;
 	speed = cv::Mat(cv::Size(para_num,chrom_num),CV_32FC1,cv::Scalar(0));
 	Population = cv::Mat(cv::Size(para_num,chrom_num),CV_32FC1,cv::Scalar(0));
-	ost=std::vector<float>(chrom_num,0);
-	post=std::vector<float>(chrom_num,0);
+	ost=std::vector<double>(chrom_num,0);
+	post=std::vector<double>(chrom_num,0);
 }
 GA::~GA(){
 
@@ -42,7 +42,7 @@ GA::~GA(){
 void GA::Setthread(ThreadPool &pool){
 	pool.enqueue(runPSO, this);
 }
-std::vector<float> GA::GetOptimal(){
+std::vector<double> GA::GetOptimal(){
 	return Gbest;
 }
 void GA::addPoint(Value3 point){
@@ -65,9 +65,9 @@ void GA::init(){
 	Population.copyTo(Pbest);
 
 	for(int i=0,min=0;i<chrom_num;i++){
-		std::vector<float> argv;
+		std::vector<double> argv;
 		for(int j=0;j<para_num;j++)
-			argv.push_back(Population.at<float>(i,j));
+			argv.push_back(Population.at<double>(i,j));
 		int result=fun(argv,data);
 		if(i==0||result<min){
 			Gbest=argv;
@@ -79,19 +79,19 @@ void GA::init(){
 void GA::ranking(){
 	Accuracy = fun(Gbest,data);
 	for(int i=0;i<chrom_num;i++){
-		std::vector<float> argv;
+		std::vector<double> argv;
 		for(int j=0;j<para_num;j++){
 			//更新速度 updata speed
-			speed.at<float>(i,j)=(float)(w*speed.at<float>(i,j)+
-				c1*(Gbest[j]-Population.at<float>(i,j))*(float)(rand()%1000)/1000+
-				c2*(Pbest.at<float>(i,j)-Population.at<float>(i,j))*(float)(rand()%1000)/1000);
+			speed.at<double>(i,j)=(double)(w*speed.at<double>(i,j)+
+				c1*(Gbest[j]-Population.at<double>(i,j))*(double)(rand()%1000)/1000+
+				c2*(Pbest.at<double>(i,j)-Population.at<double>(i,j))*(double)(rand()%1000)/1000);
 			//更新位置 update site
-			Population.at<float>(i,j)=(float)Population.at<float>(i,j)+k*(float)(speed.at<float>(i,j));
-			if((float)Population.at<float>(i,j)>dmax)
-				Population.at<float>(i,j)=dmax;
-			if((float)Population.at<float>(i,j)<dmin)
-				Population.at<float>(i,j)=dmin;
-			argv.push_back(Population.at<float>(i,j));
+			Population.at<double>(i,j)=(double)Population.at<double>(i,j)+k*(double)(speed.at<double>(i,j));
+			if((double)Population.at<double>(i,j)>dmax)
+				Population.at<double>(i,j)=dmax;
+			if((double)Population.at<double>(i,j)<dmin)
+				Population.at<double>(i,j)=dmin;
+			argv.push_back(Population.at<double>(i,j));
 		}
 		post[i]=fun(argv,data);
 	}
@@ -102,12 +102,12 @@ void GA::update(bool para){
 	for(int i=0;i<chrom_num;i++){
 		if((ost[i]>post[i])^para){//若参数小于局部最优，参数被局部数据取代
 			for(int j=0;j<para_num;j++)
-				Pbest.at<float>(i,j)=(float)Population.at<float>(i,j);
+				Pbest.at<double>(i,j)=(double)Population.at<double>(i,j);
 			ost[i]=post[i];
 		}
 		if((post[i]<gbb)^para){//比全局最优
 			for(int j=0;j<para_num;j++)
-				Gbest[j]=(float)Population.at<float>(i,j);
+				Gbest[j]=(double)Population.at<double>(i,j);
 			gbb=post[i];
 		}
 	}

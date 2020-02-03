@@ -21,34 +21,34 @@ class GA
 
 {
 public:
-	float Accuracy;
-	float min_Accuracy;
+	double Accuracy;
+	double min_Accuracy;
 	std::vector<Value3> data;
 	bool rebuild;
 private:
 	int chrom_num;
 	int para_num;
-	float c1;
-	float c2;
-	float k;
-	float w;
+	double c1;
+	double c2;
+	double k;
+	double w;
 	cv::Mat speed;
 	cv::Mat Population;
 	cv::Mat Pbest;//历史最佳
-	std::vector<float> Gbest;//globel best 全局最优
-	std::vector<float> post;
-	std::vector<float> ost;
-	std::vector<float> paramter;
-	float (*fun)(std::vector<float> &argv,std::vector<Value3> &data);
-	float dmin;
-	float dmax;
+	std::vector<double> Gbest;//globel best 全局最优
+	std::vector<double> post;
+	std::vector<double> ost;
+	std::vector<double> paramter;
+	double (*fun)(std::vector<double> &argv,std::vector<Value3> &data);
+	double dmin;
+	double dmax;
 	
-	std::vector<float> min_Gbest;
+	std::vector<double> min_Gbest;
 public:
-	GA(int para_num,float dmin,float dmax,float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data));
+	GA(int para_num,double dmin,double dmax,double(*_fun)(std::vector<double> &argv,std::vector<Value3> &data));
 	void Setthread(ThreadPool &pool);
 	void addPoint(Value3 point);
-	std::vector<float> GetOptimal();
+	std::vector<double> GetOptimal();
 	~GA();
 public:
 	void init();
@@ -139,35 +139,35 @@ private:
 	
 
 public:
-	float Accuracy;
+	double Accuracy;
 	bool rebuild;
 	std::vector<Value3> data;
-	std::vector<float> Gbest;
+	std::vector<double> Gbest;
 public:
 	Ceres();
 	~Ceres();
 	void Setthread(ThreadPool &pool);
 	void addPoint(Value3 point);
-	std::vector<float> GetOptimal();
+	std::vector<double> GetOptimal();
 };
 
 class Circen
 {
 public:
-	float Accuracy;
+	double Accuracy;
 	bool rebuild;
 	std::vector<Value3> data;
-	std::vector<float> Gbest;
+	std::vector<double> Gbest;
 public:
-	Circen(float precision = 0.001);
+	Circen(double precision = 0.001);
 	~Circen();
 	void Setthread(ThreadPool &pool);
 	void addPoint(Value3 point);
-	std::vector<float> GetOptimal();
+	std::vector<double> GetOptimal();
 private:
-	float precision;
+	double precision;
 	double distance(Value3 v1, Value3 v2);
-	Value3 CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,float &mid);
+	Value3 CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,double &mid);
 };
 
 class FactorySolve
@@ -179,10 +179,10 @@ private:
 	FactorySolve();
 public:
 	static GA* addSolve(Solve solve,int para_num,
-		float dmin,float dmax,
-		float(*_fun)(std::vector<float> &argv,std::vector<Value3> &data));
+		double dmin,double dmax,
+		double(*_fun)(std::vector<double> &argv,std::vector<Value3> &data));
 	static Ceres* addSolve(Solve solve);
-	static Circen* addSolve(Solve solve,float precision);
+	static Circen* addSolve(Solve solve,double precision);
 	static void* getSolve(Solve solve);
 	static void close();
 	~FactorySolve();

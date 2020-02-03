@@ -4,7 +4,7 @@
 #include <cmath>
 static std::mutex mut;
 
-Circen::Circen(float precision){
+Circen::Circen(double precision){
 	Accuracy = INT16_MAX;
 	this->precision = precision;
 }
@@ -20,9 +20,9 @@ void Circen::Setthread(ThreadPool &pool){
 void Circen::addPoint(Value3 point){
 	if(data.size()&&(distance(data.back(),point)>1)){
 		data.push_back(point);
-		float r;
+		double r;
 		printf("---------------------------------------\n");
-		std::vector<float> argv{0,0,0,0,0};
+		std::vector<double> argv{0,0,0,0,0};
 		if(data.size()>5){
 			for(int i = data.size()-1;i>=3;i--){
 				int j = i/2;
@@ -35,7 +35,7 @@ void Circen::addPoint(Value3 point){
 				argv[2] = r;
 				argv[3] = 1;
 				argv[4] = 0;
-				float acc = CostPathGeneration2(argv,data);
+				double acc = CostPathGeneration2(argv,data);
 				printf("%f %f %f %f\n",center.X,center.Y,r,acc);
 				if(acc<Accuracy){
 					Gbest = argv;
@@ -48,11 +48,11 @@ void Circen::addPoint(Value3 point){
 	}
 }
 
-std::vector<float> Circen::GetOptimal(){
+std::vector<double> Circen::GetOptimal(){
 	return Gbest;
 }
 
-Value3 Circen::CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,float &mid){
+Value3 Circen::CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,double &mid){
 	double a = point1.X-point2.X;
 	double b = point1.Y-point2.Y;
 	double c = point1.X-point3.X;
@@ -72,7 +72,7 @@ Value3 Circen::CalculaCenter(Value3 &point1,Value3 &point2,Value3 &point3,float 
 	return Value3(x0,y0,20); 
 }
 double Circen::distance(Value3 v1, Value3 v2){
-	float dx = v1.X - v2.X;
-	float dy = v1.Y - v2.Y;
+	double dx = v1.X - v2.X;
+	double dy = v1.Y - v2.Y;
 	return sqrt(dx*dx+dy*dy);
 }
