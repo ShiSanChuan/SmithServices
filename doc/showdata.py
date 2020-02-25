@@ -102,9 +102,24 @@ def caldata(UAV):
 					# last = UAV["time"][i];
 	
 	print("UAV time ",UAV["time"][UAV.iloc[:,0].size-1]);
-print("UAV1 time")
-caldata(UAV1)
-print("UAV2 time")
-caldata(UAV2)
-print("UAV3 time")
-caldata(UAV3)
+# print("UAV1 time")
+# caldata(UAV1)
+# print("UAV2 time")
+# caldata(UAV2)
+# print("UAV3 time")
+# caldata(UAV3)
+
+#绘制规则路线图
+showpath()
+
+
+
+
+
+
+
+
+
+
+
+
