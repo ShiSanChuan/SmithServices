@@ -10,8 +10,8 @@ Listen_port : /dev/pts/20
 #/dev/pts/24
 Simulate_port : /dev/pts/21
 #UAV information
-UAV_filed: &1 11.539999999999999
-UAV_speed: &2 0.0030000000000000001
+UAV_filed: &1 8.539999999999999
+UAV_speed: &2 0.000200000000000000001
 #UAV1 information
 start_point1: &3 
   - 0

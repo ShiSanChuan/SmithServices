@@ -157,7 +157,7 @@ void run(RadioInterface *Radio,UAVSimulate *Suav){
 	flag =false;
 }
 void runwithpath(UAVSimulate *Suav){
-	float speed = 0.002;//飞行速度
+	float speed = 0.00012;//飞行速度
 	float dis;
 	uint8_t situation;
 	int64_t m = rand()%(Suav->path.size());
